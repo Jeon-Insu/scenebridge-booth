@@ -1,0 +1,94 @@
+#usda 1.0
+(
+    defaultPrim = "Table_125x75x75cm"
+    doc = "Reusable 1.25 m x 0.75 m x 0.75 m tabletop demo table. The top-left footprint origin is not used: local X/Y begin at the physical bottom-left corner and the top surface is local Z=0."
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "Table_125x75x75cm"
+{
+    custom double gist:heightM = 0.75
+    custom string gist:localFrame = "TableFrame: X=[0,1.25], Y=[0,0.75], tabletop Z=0, floor Z=-0.75"
+    custom double gist:lengthM = 1.25
+    custom double gist:topThicknessM = 0.04
+    custom double gist:widthM = 0.75
+
+    def Xform "Geometry"
+    {
+        def Cube "Top"
+        {
+            double size = 1
+            color3f[] primvars:displayColor = [(0.69, 0.61, 0.50)]
+            double3 xformOp:scale = (1.25, 0.75, 0.04)
+            double3 xformOp:translate = (0.625, 0.375, -0.02)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "Leg_X0_Y0"
+        {
+            double size = 1
+            color3f[] primvars:displayColor = [(0.22, 0.23, 0.25)]
+            double3 xformOp:scale = (0.055, 0.055, 0.71)
+            double3 xformOp:translate = (0.09, 0.09, -0.395)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+        def Cube "Leg_X1_Y0"
+        {
+            double size = 1
+            color3f[] primvars:displayColor = [(0.22, 0.23, 0.25)]
+            double3 xformOp:scale = (0.055, 0.055, 0.71)
+            double3 xformOp:translate = (1.16, 0.09, -0.395)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+        def Cube "Leg_X0_Y1"
+        {
+            double size = 1
+            color3f[] primvars:displayColor = [(0.22, 0.23, 0.25)]
+            double3 xformOp:scale = (0.055, 0.055, 0.71)
+            double3 xformOp:translate = (0.09, 0.66, -0.395)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+        def Cube "Leg_X1_Y1"
+        {
+            double size = 1
+            color3f[] primvars:displayColor = [(0.22, 0.23, 0.25)]
+            double3 xformOp:scale = (0.055, 0.055, 0.71)
+            double3 xformOp:translate = (1.16, 0.66, -0.395)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "LongBraceFront"
+        {
+            double size = 1
+            color3f[] primvars:displayColor = [(0.22, 0.23, 0.25)]
+            double3 xformOp:scale = (1.07, 0.035, 0.035)
+            double3 xformOp:translate = (0.625, 0.09, -0.18)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+        def Cube "LongBraceBack"
+        {
+            double size = 1
+            color3f[] primvars:displayColor = [(0.22, 0.23, 0.25)]
+            double3 xformOp:scale = (1.07, 0.035, 0.035)
+            double3 xformOp:translate = (0.625, 0.66, -0.18)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Xform "Reference"
+    {
+        custom string gist:note = "Object transforms are authored in this frame; tracked asset origins rest on Z=0."
+
+        def BasisCurves "TabletopBoundary"
+        {
+            uniform token type = "linear"
+            int[] curveVertexCounts = [5]
+            point3f[] points = [(0, 0, 0.002), (1.25, 0, 0.002), (1.25, 0.75, 0.002), (0, 0.75, 0.002), (0, 0, 0.002)]
+            float[] widths = [0.004] (
+                interpolation = "constant"
+            )
+            color3f[] primvars:displayColor = [(0.12, 0.55, 0.95)]
+        }
+    }
+}

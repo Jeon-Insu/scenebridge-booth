@@ -1,0 +1,15 @@
+{
+  "note": "Heights used only to scale props in synthetic renders. Demo assumptions from docs/VENUE_20260918.md, NOT measured. The Meshy exports in catalog.json arrive at arbitrary sizes (elephant 0.45 m, duck 0.018 m). Replace with measured heights before real training.",
+  "heights_m": {
+    "stainless_mug": 0.10,
+    "paper_cup": 0.10,
+    "gist_mascot": 0.20,
+    "desk_clock": 0.15,
+    "green_robot": 0.12,
+    "devil_duck": 0.08,
+    "elephant": 0.12,
+    "zebra": 0.12,
+    "dinosaur": 0.12,
+    "giraffe": 0.18
+  }
+}

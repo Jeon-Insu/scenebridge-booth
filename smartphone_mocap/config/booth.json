@@ -1,0 +1,172 @@
+{
+  "venue": "dongshin_ai_classroom",
+  "perception_max_hz": 5,
+  "rig": {
+    "name": "venue_20261025_board_extrinsics",
+    "workspace_size_m": [
+      1.25,
+      0.75,
+      0.35
+    ],
+    "origin": "tabletop_bottom_left",
+    "axes": "+X right, +Y toward tabletop top, +Z above tabletop",
+    "support_plane_z_m": 0,
+    "look_at_target_m": [
+      0.625,
+      0.375,
+      0.1
+    ],
+    "rough_calibration_only": true,
+    "external_calibration_policy": "repeat after any camera position or angle changes",
+    "scene_placement": {
+      "translation_m": [
+        0,
+        0,
+        0
+      ],
+      "yaw_deg": 0
+    },
+    "calibration_provenance": {
+      "status": "venue_20261025: 네 대 모두 A4 ChArUco 5x3/56mm를 직접 읽음(각 40장, 재투영 0.10~0.14px). 테이블은 보드 평면에 투영한 흰 상판에 1.25x0.75m 사각형을 맞춰 찾음.",
+      "report": "../calibration/venue_20261025/extrinsics_report.json",
+      "assumptions": [
+        "table 1.25x0.75m (user: first small table)",
+        "board paper lies on the tabletop (face height 0)",
+        "shared cam_A intrinsics for all units (user: reuse intrinsics)",
+        "front edge = cam_B..cam_D side where the operator stands (user)"
+      ],
+      "overlay": "outputs/venue_extrinsics_20261025/overlay_final.jpg"
+    }
+  },
+  "preview_window_title": "Venue Live 4 Cameras",
+  "show_preview": false,
+  "preview_tile_width": 320,
+  "preview_tile_height": 180,
+  "embedded_preview_path": "../../outputs/tabletop_camera_mosaic.jpg",
+  "embedded_preview_layout": "raw_and_perception",
+  "embedded_preview_update_hz": 5,
+  "embedded_preview_tile_width": 320,
+  "embedded_preview_tile_height": 180,
+  "embedded_preview_jpeg_quality": 78,
+  "agent_control_dir": "../../outputs/tabletop_agent",
+  "pose_enabled": false,
+  "device": 0,
+  "inference_image_size": 320,
+  "camera_queue_size": 2,
+  "sync_queue_size": 6,
+  "sync_tolerance_ms": 100,
+  "minimum_active_cameras": 2,
+  "camera_timeout_seconds": 1.5,
+  "udp": {
+    "host": "127.0.0.1",
+    "port": 7001
+  },
+  "record_jsonl": "../../outputs/tracking/tracking.jsonl",
+  "recording": {
+    "enabled": false,
+    "output_dir": "../../recordings",
+    "session_label": "tabletop_scenarios",
+    "fps": 5,
+    "codec": "MJPG"
+  },
+  "object_detection": {
+    "enabled": true,
+    "booth_props": "../../config/booth_props.json",
+    "booth_props_note": "소품은 config/booth_props.json(학습 소품만)에서 정한다",
+    "prop_catalog_dir": "../../assets/props",
+    "checkpoint": "../../outputs/models/prop_detector_a1.pth",
+    "orientation_head": "../../outputs/models/orientation_head.pt",
+    "orientation_interval_s": 0.5,
+    "confidence": 0.5,
+    "image_size": 312,
+    "mask_threshold": 0.5,
+    "use_amp": true,
+    "local_tracking": {
+      "enabled": true,
+      "frame_rate": 5,
+      "track_activation_threshold": 0.25,
+      "lost_track_buffer": 30,
+      "minimum_matching_threshold": 0.8,
+      "minimum_consecutive_frames": 1
+    },
+    "anchor": "mask_centroid",
+    "position_mode": "hybrid_mask",
+    "support_plane_z_m": 0,
+    "default_object_height_m": 0.1,
+    "snap_to_support_plane_m": 0.06,
+    "cross_view_appearance_weight_px": 12,
+    "max_cross_view_appearance_distance": 0.8,
+    "max_reprojection_error_px": 100,
+    "ema_alpha": 0.55,
+    "ema_alpha_z": 0.85,
+    "min_confirmations": 2,
+    "hold_seconds": 1.5,
+    "reid_seconds": 300,
+    "max_instances_per_class": 6,
+    "max_association_distance_m": 0.45,
+    "max_association_z_m": 0.6,
+    "appearance_weight": 0.25,
+    "max_appearance_distance": 0.8,
+    "local_track_match_bonus_m": 0.12,
+    "local_track_conflict_penalty_m": 0.2,
+    "workspace_min_xyz": [
+      -0.1,
+      -0.1,
+      -0.12
+    ],
+    "workspace_max_xyz": [
+      1.35,
+      0.85,
+      0.65
+    ],
+    "association_backend": "object_centric",
+    "appearance_policy": "continuity"
+  },
+  "cameras": [
+    {
+      "id": "cam_A",
+      "corner": "top_left",
+      "source": "/dev/v4l/by-path/platform-NVDA8000:00-usb-0:1.2:1.0-video-index0",
+      "calibration": "../calibration/venue_20261025/cam_A.json",
+      "width": 1280,
+      "height": 720,
+      "fps": 10,
+      "fourcc": "YUYV"
+    },
+    {
+      "id": "cam_B",
+      "corner": "bottom_left",
+      "source": "/dev/v4l/by-path/platform-NVDA8000:02-usb-0:1.2:1.0-video-index0",
+      "calibration": "../calibration/venue_20261025/cam_B.json",
+      "width": 1280,
+      "height": 720,
+      "fps": 15,
+      "fourcc": "MJPG"
+    },
+    {
+      "id": "cam_C",
+      "corner": "top_right",
+      "source": "/dev/v4l/by-path/platform-NVDA8000:00-usb-0:1.3:1.0-video-index0",
+      "calibration": "../calibration/venue_20261025/cam_C.json",
+      "width": 1280,
+      "height": 720,
+      "fps": 10,
+      "fourcc": "YUYV"
+    },
+    {
+      "id": "cam_D",
+      "corner": "bottom_right",
+      "source": "/dev/v4l/by-path/platform-NVDA8000:01-usb-0:1.3:1.0-video-index0",
+      "calibration": "../calibration/venue_20261025/cam_D.json",
+      "width": 1280,
+      "height": 720,
+      "fps": 15,
+      "fourcc": "MJPG"
+    }
+  ],
+  "venue_status": {
+    "calibration": "venue_20261025 extrinsics (all four cameras read the board); repeat after any camera move",
+    "height_status": "User-assumed native USD size, converted with metersPerUnit; not physically measured",
+    "prompt_backend": "experimental must check live false positives and latency"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "venues": {
+    "dongshin_ai_classroom": {
+      "background": "usd/venues/dongshin_ai_classroom.usda",
+      "offset_m": [
+        45.011,
+        3.195,
+        4.535
+      ],
+      "yaw_deg": 90.0,
+      "note": "동신여고 AI 창의교실, 대회 사진 액자 벽(서쪽) 앞 1.6m",
+      "camera": {
+        "eye": [
+          0.625,
+          -2.3,
+          1.45
+        ],
+        "target": [
+          0.625,
+          1.0,
+          0.35
+        ]
+      }
+    }
+  }
+}

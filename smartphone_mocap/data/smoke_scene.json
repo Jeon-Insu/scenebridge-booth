@@ -1,0 +1,132 @@
+{
+ "note": "One tracking frame from the 2026-10-26 lab test (7 props standing still). Used by tools/booth_smoke_test.py for the agent check; numbers only, no images.",
+ "frame_number": 149,
+ "objects": [
+  {
+   "id": "devil_duck/appearance_000/instance_000",
+   "label": "devil_duck",
+   "state": "active",
+   "xyz": [
+    0.5579395991484877,
+    0.59157112904679,
+    0.0
+   ],
+   "source_cameras": [
+    "cam_A",
+    "cam_B",
+    "cam_C",
+    "cam_D"
+   ],
+   "display_name": "오리",
+   "yaw_deg": 100.1,
+   "pose": "upright"
+  },
+  {
+   "id": "dinosaur/appearance_000/instance_000",
+   "label": "dinosaur",
+   "state": "active",
+   "xyz": [
+    0.5968915197724178,
+    0.23112207850464483,
+    0.0
+   ],
+   "source_cameras": [
+    "cam_A",
+    "cam_B",
+    "cam_C",
+    "cam_D"
+   ],
+   "display_name": "공룡",
+   "pose": "lying"
+  },
+  {
+   "id": "elephant/appearance_000/instance_000",
+   "label": "elephant",
+   "state": "active",
+   "xyz": [
+    0.5620431015645386,
+    0.40271790214911296,
+    0.0
+   ],
+   "source_cameras": [
+    "cam_A",
+    "cam_B",
+    "cam_C",
+    "cam_D"
+   ],
+   "display_name": "코끼리",
+   "yaw_deg": 275.4,
+   "pose": "upright"
+  },
+  {
+   "id": "giraffe/appearance_000/instance_000",
+   "label": "giraffe",
+   "state": "active",
+   "xyz": [
+    0.9731165343801162,
+    0.48153065887313856,
+    0.0
+   ],
+   "source_cameras": [
+    "cam_A",
+    "cam_C",
+    "cam_D"
+   ],
+   "display_name": "기린",
+   "pose": "lying"
+  },
+  {
+   "id": "green_robot/appearance_000/instance_000",
+   "label": "green_robot",
+   "state": "active",
+   "xyz": [
+    0.3158313928846246,
+    0.5324943943309308,
+    0.0
+   ],
+   "source_cameras": [
+    "cam_A",
+    "cam_B",
+    "cam_C",
+    "cam_D"
+   ],
+   "display_name": "로봇",
+   "yaw_deg": 154.4,
+   "pose": "upright"
+  },
+  {
+   "id": "paper_cup/appearance_000/instance_000",
+   "label": "paper_cup",
+   "state": "active",
+   "xyz": [
+    0.7937160547404735,
+    0.470425554120757,
+    0.0
+   ],
+   "source_cameras": [
+    "cam_B",
+    "cam_C",
+    "cam_D"
+   ],
+   "display_name": "종이컵"
+  },
+  {
+   "id": "zebra/appearance_000/instance_000",
+   "label": "zebra",
+   "state": "active",
+   "xyz": [
+    0.7644210535633428,
+    0.20072283534986077,
+    0.0
+   ],
+   "source_cameras": [
+    "cam_A",
+    "cam_B",
+    "cam_D"
+   ],
+   "display_name": "얼룩말",
+   "yaw_deg": 199.0,
+   "pose": "upright"
+  }
+ ]
+}

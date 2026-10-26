@@ -1,0 +1,61 @@
+{
+  "date": "2026-10-25",
+  "note": "v1.1 실제 시험(동신여고 부스 준비). 허브 3개에 카메라 4대, 허브 하나(1-1.2/1-1.3)를 두 대가 함께 씀 → tools/creative_uvc_bandwidth.sh apply(sudo) 적용됨. 내부 보정은 creative_4cam 공용값 재사용(사용자 결정), 외부 보정은 새로 함.",
+  "camera_mapping_confirmed_by_user": true,
+  "cameras": [
+    {
+      "id": "cam_A",
+      "view": 1,
+      "source": "/dev/v4l/by-path/platform-NVDA8000:00-usb-0:1.2:1.0-video-index0",
+      "corner_from_seated_user": "top_left",
+      "fourcc": "YUYV",
+      "fps": 10
+    },
+    {
+      "id": "cam_B",
+      "view": 4,
+      "source": "/dev/v4l/by-path/platform-NVDA8000:02-usb-0:1.2:1.0-video-index0",
+      "corner_from_seated_user": "bottom_left",
+      "fourcc": "MJPG",
+      "fps": 15
+    },
+    {
+      "id": "cam_C",
+      "view": 2,
+      "source": "/dev/v4l/by-path/platform-NVDA8000:00-usb-0:1.3:1.0-video-index0",
+      "corner_from_seated_user": "top_right",
+      "fourcc": "YUYV",
+      "fps": 10
+    },
+    {
+      "id": "cam_D",
+      "view": 3,
+      "source": "/dev/v4l/by-path/platform-NVDA8000:01-usb-0:1.3:1.0-video-index0",
+      "corner_from_seated_user": "bottom_right",
+      "fourcc": "MJPG",
+      "fps": 15
+    }
+  ],
+  "table_length_m": 1.25,
+  "table_width_m": 0.75,
+  "board": {
+    "squares": [
+      5,
+      3
+    ],
+    "square_length_m": 0.056,
+    "marker_length_m": 0.042,
+    "dictionary": "DICT_4X4_50",
+    "min_corners": 4,
+    "why": "7x5/40mm 보드는 약 1.1m 떨어진 카메라에서 마커 한 칸이 2~3px라 한 대만 읽었다. A4 한 장에 칸을 키움(마커 한 칸 약 7mm).",
+    "face_height_m": 0.0,
+    "center_is_table_center": "not assumed: the table is fitted on the board plane"
+  },
+  "extrinsics_status": "done 2026-10-25 (tools/solve_board_extrinsics.py)",
+  "mapping_note": "사용자: VIEW1=A, VIEW4=B, VIEW2=C, VIEW3=D. 조작자는 B와 D 사이 긴 면(앞)에 선다. A·C는 허브 하나를 함께 씀(YUYV 10, 대역폭 보정).",
+  "usb_shared_pair": [
+    "1-1.2",
+    "1-1.3"
+  ],
+  "table_note": "처음 쓴 작은 테이블(사용자), 기록상 1.25×0.75m. 화면 윤곽으로 잰 값 약 1.20×0.74m."
+}

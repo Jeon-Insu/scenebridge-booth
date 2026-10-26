@@ -1,0 +1,16 @@
+{
+  "listen_host": "127.0.0.1",
+  "listen_port": 7080,
+  "provider": "auto",
+  "base_url": "http://127.0.0.1:30000/v1",
+  "model": "auto",
+  "vision_input": "auto",
+  "vision_max_bytes": 6000000,
+  "max_tool_rounds": 8,
+  "progress_path": "outputs/tabletop_agent/progress.json",
+  "inference_timeout_seconds": 90.0,
+  "auto_resume_after_response": false,
+  "memory_db_path": "outputs/tabletop_agent/state.sqlite3",
+  "context_preflight": true,
+  "image_token_reserve": 1024
+}

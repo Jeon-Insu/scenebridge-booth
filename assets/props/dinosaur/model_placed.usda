@@ -1,0 +1,22 @@
+#usda 1.0
+(
+    defaultPrim = "Asset"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "Asset"
+{
+    float3 xformOp:scale = (1.5000000335276134, 1.5000000335276134, 1.5000000335276134)
+    double3 xformOp:translate = (4.545087096357798e-05, -0.00023142435173894785, 3.665512827297039e-17)
+    uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+
+    def Xform "Model" (
+        prepend references = @./model.usdz@
+    )
+    {
+        float xformOp:rotateX:studioUp = 90
+        uniform token[] xformOpOrder = ["xformOp:rotateX:studioUp"]
+    }
+}
+

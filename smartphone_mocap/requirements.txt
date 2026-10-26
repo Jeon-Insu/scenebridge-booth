@@ -1,0 +1,15 @@
+# Booth runtime (tracker, agent bridge, tools, tests). Versions verified on NVIDIA GB10 / Ubuntu 24.04 / Python 3.12.3.
+# Install torch + torchvision FIRST with the CUDA build for your platform (verified: torch 2.13.0, torchvision 0.28.0),
+# then:  .venv-mocap/bin/python -m pip install -r smartphone_mocap/requirements.txt
+numpy==2.5.2
+opencv-python==5.0.0.93
+pillow==12.3.0
+scipy==1.18.1
+supervision==0.30.2
+transformers==5.16.1
+rfdetr==1.10.0
+ultralytics==8.4.138
+PyYAML==6.0.3
+matplotlib==3.11.1
+requests==2.34.2
+pytest>=9.0

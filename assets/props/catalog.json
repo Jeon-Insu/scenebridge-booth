@@ -1,0 +1,217 @@
+{
+  "schema_version": 1,
+  "assets": [
+    {
+      "asset_id": "stainless_mug",
+      "display_name_ko": "스테인리스 머그",
+      "usd_uri": "stainless_mug/model_placed.usda",
+      "detector_class": "cup",
+      "height_m": 0.1,
+      "height_source": "class_prior",
+      "views": [
+        "stainless_mug/views/view_0.png",
+        "stainless_mug/views/view_1.png",
+        "stainless_mug/views/view_2.png",
+        "stainless_mug/views/view_3.png"
+      ],
+      "provenance": {
+        "note": "Meshy API 생성 (meshy-6, remesh 5000, PBR). 실물 높이 미측정 — cup 클래스 prior 사용"
+      },
+      "source_usd_uri": "stainless_mug/model.usdz"
+    },
+    {
+      "asset_id": "paper_cup",
+      "display_name_ko": "흰 종이컵",
+      "usd_uri": "paper_cup/model_placed.usda",
+      "detector_class": "cup",
+      "height_m": 0.1,
+      "height_source": "class_prior",
+      "views": [
+        "paper_cup/views/view_0.png",
+        "paper_cup/views/view_1.png",
+        "paper_cup/views/view_2.png",
+        "paper_cup/views/view_3.png"
+      ],
+      "provenance": {
+        "note": "Meshy API 생성. 9/10 녹화의 종이컵과 동일 물건으로 확인(최고 유사도 0.744)",
+        "task_id": "01a0ab27-549a-70fa-a0b3-f055ba2ac14b",
+        "provider": "meshy",
+        "remove_bg": true,
+        "cutout_model": "nano-banana",
+        "credits": {
+          "cutout": 12,
+          "model": 30,
+          "total": 42
+        },
+        "source_photos": [
+          "disposablecupv1-1.jpg",
+          "disposablecupv1-2.jpg",
+          "disposablecupv1-3.jpg",
+          "disposablecupv1-4.jpg"
+        ],
+        "created_at": "2026-09-16T17:01:52+00:00"
+      },
+      "source_usd_uri": "paper_cup/model.usdz"
+    },
+    {
+      "asset_id": "gist_mascot",
+      "display_name_ko": "GIST 마스코트 인형",
+      "usd_uri": "gist_mascot/model_placed.usda",
+      "detector_class": "teddy bear",
+      "height_m": 0.2,
+      "height_source": "estimate",
+      "views": [
+        "gist_mascot/views/view_0.png",
+        "gist_mascot/views/view_1.png",
+        "gist_mascot/views/view_2.png",
+        "gist_mascot/views/view_3.png"
+      ],
+      "provenance": {
+        "source_manifest": "../incoming/meshy_20260918/manifest.json",
+        "note": "9/18 user authorized all props; native USD size assumed as real size. Isaac rendering/contact pending.",
+        "size_policy": "User requested native USD size as assumed real size; bounding-box extent multiplied by metersPerUnit, not measured."
+      },
+      "source_usd_uri": "gist_mascot/model.usdz"
+    },
+    {
+      "asset_id": "desk_clock",
+      "display_name_ko": "탁상시계",
+      "usd_uri": "desk_clock/model_placed.usda",
+      "detector_class": "clock",
+      "height_m": 0.15,
+      "height_source": "estimate",
+      "views": [
+        "desk_clock/views/view_0.png",
+        "desk_clock/views/view_1.png",
+        "desk_clock/views/view_2.png",
+        "desk_clock/views/view_3.png"
+      ],
+      "provenance": {
+        "source_manifest": "../incoming/meshy_20260918/manifest.json",
+        "note": "9/18 user authorized all props; native USD size assumed as real size. Isaac rendering/contact pending.",
+        "size_policy": "User requested native USD size as assumed real size; bounding-box extent multiplied by metersPerUnit, not measured."
+      },
+      "source_usd_uri": "desk_clock/model.usdz"
+    },
+    {
+      "asset_id": "green_robot",
+      "display_name_ko": "초록 로봇",
+      "usd_uri": "green_robot/model_placed.usda",
+      "detector_class": "toy robot",
+      "height_m": 0.12,
+      "height_source": "estimate",
+      "views": [
+        "green_robot/views/view_0.png",
+        "green_robot/views/view_1.png",
+        "green_robot/views/view_2.png",
+        "green_robot/views/view_3.png"
+      ],
+      "provenance": {
+        "source_manifest": "../incoming/meshy_20260918/manifest.json",
+        "note": "9/18 user authorized all props; native USD size assumed as real size. Isaac rendering/contact pending.",
+        "size_policy": "User requested native USD size as assumed real size; bounding-box extent multiplied by metersPerUnit, not measured."
+      },
+      "source_usd_uri": "green_robot/model.usdz"
+    },
+    {
+      "asset_id": "devil_duck",
+      "display_name_ko": "빨간 악마 오리",
+      "usd_uri": "devil_duck/model_placed.usda",
+      "detector_class": "toy duck",
+      "height_m": 0.08,
+      "height_source": "estimate",
+      "views": [
+        "devil_duck/views/view_0.png",
+        "devil_duck/views/view_1.png",
+        "devil_duck/views/view_2.png",
+        "devil_duck/views/view_3.png"
+      ],
+      "provenance": {
+        "source_manifest": "../incoming/meshy_20260918/manifest.json",
+        "note": "9/18 user authorized all props; native USD size assumed as real size. Isaac rendering/contact pending.",
+        "size_policy": "User requested native USD size as assumed real size; bounding-box extent multiplied by metersPerUnit, not measured."
+      },
+      "source_usd_uri": "devil_duck/model.usdz"
+    },
+    {
+      "asset_id": "elephant",
+      "display_name_ko": "코끼리 피규어",
+      "usd_uri": "elephant/model_placed.usda",
+      "detector_class": "elephant",
+      "height_m": 0.12,
+      "height_source": "estimate",
+      "views": [
+        "elephant/views/view_0.png",
+        "elephant/views/view_1.png",
+        "elephant/views/view_2.png",
+        "elephant/views/view_3.png"
+      ],
+      "provenance": {
+        "source_manifest": "../incoming/meshy_20260918/manifest.json",
+        "note": "9/18 user authorized all props; native USD size assumed as real size. Isaac rendering/contact pending.",
+        "size_policy": "User requested native USD size as assumed real size; bounding-box extent multiplied by metersPerUnit, not measured."
+      },
+      "source_usd_uri": "elephant/model.usdz"
+    },
+    {
+      "asset_id": "zebra",
+      "display_name_ko": "얼룩말 피규어",
+      "usd_uri": "zebra/model_placed.usda",
+      "detector_class": "zebra",
+      "height_m": 0.12,
+      "height_source": "estimate",
+      "views": [
+        "zebra/views/view_0.png",
+        "zebra/views/view_1.png",
+        "zebra/views/view_2.png",
+        "zebra/views/view_3.png"
+      ],
+      "provenance": {
+        "source_manifest": "../incoming/meshy_20260918/manifest.json",
+        "note": "9/18 user authorized all props; native USD size assumed as real size. Isaac rendering/contact pending.",
+        "size_policy": "User requested native USD size as assumed real size; bounding-box extent multiplied by metersPerUnit, not measured."
+      },
+      "source_usd_uri": "zebra/model.usdz"
+    },
+    {
+      "asset_id": "dinosaur",
+      "display_name_ko": "공룡 피규어",
+      "usd_uri": "dinosaur/model_placed.usda",
+      "detector_class": "toy dinosaur",
+      "height_m": 0.12,
+      "height_source": "estimate",
+      "views": [
+        "dinosaur/views/view_0.png",
+        "dinosaur/views/view_1.png",
+        "dinosaur/views/view_2.png",
+        "dinosaur/views/view_3.png"
+      ],
+      "provenance": {
+        "source_manifest": "../incoming/meshy_20260918/manifest.json",
+        "note": "9/18 user authorized all props; native USD size assumed as real size. Isaac rendering/contact pending.",
+        "size_policy": "User requested native USD size as assumed real size; bounding-box extent multiplied by metersPerUnit, not measured."
+      },
+      "source_usd_uri": "dinosaur/model.usdz"
+    },
+    {
+      "asset_id": "giraffe",
+      "display_name_ko": "기린 피규어",
+      "usd_uri": "giraffe/model_placed.usda",
+      "detector_class": "giraffe",
+      "height_m": 0.18,
+      "height_source": "estimate",
+      "views": [
+        "giraffe/views/view_0.png",
+        "giraffe/views/view_1.png",
+        "giraffe/views/view_2.png",
+        "giraffe/views/view_3.png"
+      ],
+      "provenance": {
+        "source_manifest": "../incoming/meshy_20260918/manifest.json",
+        "note": "9/18 user authorized all props; native USD size assumed as real size. Isaac rendering/contact pending.",
+        "size_policy": "User requested native USD size as assumed real size; bounding-box extent multiplied by metersPerUnit, not measured."
+      },
+      "source_usd_uri": "giraffe/model.usdz"
+    }
+  ]
+}

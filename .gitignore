@@ -1,0 +1,27 @@
+# Python / venv
+__pycache__/
+*.pyc
+.venv*
+.pytest_cache/
+
+# Run outputs, recordings, datasets (never commit)
+outputs/
+recordings/
+datasets/
+*.sqlite3
+
+# Delivered separately (see docs/ASSETS.md)
+assets/props/*/model.usdz
+assets/props/*/views/
+usd/venues/source/
+assets/textures/
+assets/nvidia/
+
+# Model weights come from the GitHub Release (see docs/INSTALL.md)
+*.pth
+*.pt
+
+# Secrets
+.secrets/
+secrets/
+*.key

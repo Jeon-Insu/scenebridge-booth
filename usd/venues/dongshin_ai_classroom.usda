@@ -1,0 +1,128 @@
+#usda 1.0
+(
+    defaultPrim = "Dongshin_Main"
+    metersPerUnit = 1
+    subLayers = [@./source/Dongshin_Final/Dongshin_Final.usda@]
+    upAxis = "Z"
+)
+
+over "Dongshin_Main"
+{
+    over "Rooms"
+    {
+        over "Teachers_Office" (
+            active = false
+        )
+        {
+        }
+        over "AI_Creative_Classroom"
+        {
+            over "InteriorAssets"
+            {
+                over "Furniture"
+                {
+                    over "C04_06" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C04_11" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C04_12" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C06_10" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C06_12" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C06_21" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C06_23" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C09_10" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C09_12" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C09_21" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C09_23" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C10_10" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C10_12" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C10_21" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C10_22" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C10_23" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C10_24" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "D19_05" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "D19_11" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "D19_12" (
+                        active = false
+                    )
+                    {
+                    }
+                }
+            }
+        }
+    }
+}

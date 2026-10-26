@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "camera_id": "cam_C",
+  "image_size": [
+    1280,
+    720
+  ],
+  "camera_matrix": [
+    [
+      925.8395936955528,
+      0,
+      649.8320941947567
+    ],
+    [
+      0,
+      932.7364066490787,
+      323.909313002744
+    ],
+    [
+      0,
+      0,
+      1
+    ]
+  ],
+  "distortion": [
+    0.008702017631345286,
+    -0.04472213712194033,
+    0.003654968487566953,
+    -0.00032805810662035035,
+    0.11814469303344483
+  ],
+  "world_to_camera": [
+    [
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      1
+    ]
+  ],
+  "time_offset_ns": 0,
+  "intrinsics_source": "cam_A_intrinsics.json",
+  "intrinsics_status": "approximate_shared_from_camera_A_not_measured_for_this_unit",
+  "extrinsics_calibrated": false,
+  "note": "world_to_camera is an identity placeholder, NOT a measured camera pose. Estimate extrinsics separately for this camera before live reconstruction."
+}

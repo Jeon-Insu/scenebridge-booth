@@ -1,0 +1,36 @@
+[package]
+version = "0.6.0"
+category = "Simulation"
+title = "GIST Tabletop Twin"
+description = "Snapshot-aware local scene agent, tracked-object registry, and approved reconstruction queue for Demo 2."
+authors = ["GIST"]
+readme = "docs/README.md"
+keywords = ["tabletop", "digital twin", "objects", "reconstruction", "agent"]
+
+[dependencies]
+"omni.usd" = {}
+"omni.ui" = {}
+"omni.ui.scene" = {}
+"omni.kit.viewport.utility" = {}
+"omni.timeline" = {}
+"omni.kit.language.korean" = {}
+
+[[python.module]]
+name = "gist.tabletop_twin"
+
+[settings]
+exts."gist.tabletop_twin".udp_port = 7001
+exts."gist.tabletop_twin".world_offset_x = 0.0
+exts."gist.tabletop_twin".world_offset_y = 0.0
+exts."gist.tabletop_twin".world_offset_z = 0.0
+exts."gist.tabletop_twin".background_stage_path = ""
+exts."gist.tabletop_twin".stale_remove_seconds = 30.0
+exts."gist.tabletop_twin".max_tracked_objects = 128
+exts."gist.tabletop_twin".auto_open_window = true
+exts."gist.tabletop_twin".camera_preview_refresh_hz = 10.0
+exts."gist.tabletop_twin".auto_frame_demo_context = true
+exts."gist.tabletop_twin".agent_control_dir = "outputs/tabletop_agent"
+exts."gist.tabletop_twin".agent_service_url = "http://127.0.0.1:7080/v1/agent/respond"
+exts."gist.tabletop_twin".agent_timeout_seconds = 240.0
+exts."gist.tabletop_twin".agent_snapshot_wait_seconds = 15.0
+exts."gist.tabletop_twin".agent_auto_resume_after_response = false

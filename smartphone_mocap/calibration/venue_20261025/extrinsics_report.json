@@ -1,0 +1,108 @@
+{
+  "date": "2026-10-25",
+  "method": "every camera reads the board; table fitted on the board plane",
+  "table_size_m": [
+    1.25,
+    0.75
+  ],
+  "board_face_height_m_assumed": 0.0,
+  "paper_outline_table_m": [
+    [
+      0.7812,
+      0.4671,
+      0.0
+    ],
+    [
+      0.5012,
+      0.4649,
+      0.0
+    ],
+    [
+      0.5025,
+      0.2969,
+      0.0
+    ],
+    [
+      0.7825,
+      0.2991,
+      0.0
+    ]
+  ],
+  "table_axis_alignment_deg": 0.0,
+  "table_from_board": [
+    [
+      -0.9999681865935375,
+      0.007976578265910077,
+      0.0,
+      0.7811584425858914
+    ],
+    [
+      -0.007976578265910077,
+      -0.9999681865935375,
+      0.0,
+      0.4671388916329439
+    ],
+    [
+      0.0,
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "table_fit": {
+    "centre_board_m": [
+      0.1568884277343292,
+      0.09089035034176442
+    ],
+    "yaw_deg": -0.4570291161537199
+  },
+  "intrinsics": "smartphone_mocap/calibration/creative_4cam/cam_A_intrinsics.json",
+  "cameras": {
+    "cam_A": {
+      "position_m": [
+        -0.072,
+        0.723,
+        0.871
+      ],
+      "pitch_down_deg": 50.1,
+      "board_frames": 40,
+      "median_reprojection_px": 0.13
+    },
+    "cam_B": {
+      "position_m": [
+        -0.049,
+        -0.143,
+        0.685
+      ],
+      "pitch_down_deg": 34.2,
+      "board_frames": 40,
+      "median_reprojection_px": 0.098
+    },
+    "cam_C": {
+      "position_m": [
+        1.395,
+        0.897,
+        0.641
+      ],
+      "pitch_down_deg": 30.3,
+      "board_frames": 40,
+      "median_reprojection_px": 0.125
+    },
+    "cam_D": {
+      "position_m": [
+        1.389,
+        0.003,
+        0.876
+      ],
+      "pitch_down_deg": 39.4,
+      "board_frames": 40,
+      "median_reprojection_px": 0.139
+    }
+  }
+}

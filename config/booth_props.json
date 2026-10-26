@@ -1,0 +1,19 @@
+{
+  "설명": [
+    "부스에서 쓸 소품 목록입니다. 학습한 소품만 쓸 수 있습니다: python3 tools/booth_check.py --props",
+    "prop_id: 학습한 소품 이름(바꾸지 않음), name_ko: 화면·대화에 쓸 한국어 이름, aliases_ko: 같은 물건을 부르는 다른 말, count: 테이블에 올릴 개수(기본 1).",
+    "고친 뒤: python3 tools/booth_check.py 로 확인하고 데모를 다시 켜세요."
+  ],
+  "props": [
+    {"prop_id": "gist_mascot", "name_ko": "마스코트", "aliases_ko": ["인형", "지스트 마스코트"], "count": 1},
+    {"prop_id": "giraffe", "name_ko": "기린", "aliases_ko": ["기린 인형"], "count": 1},
+    {"prop_id": "zebra", "name_ko": "얼룩말", "aliases_ko": [], "count": 1},
+    {"prop_id": "elephant", "name_ko": "코끼리", "aliases_ko": [], "count": 1},
+    {"prop_id": "dinosaur", "name_ko": "공룡", "aliases_ko": [], "count": 1},
+    {"prop_id": "devil_duck", "name_ko": "오리", "aliases_ko": ["빨간 오리"], "count": 1},
+    {"prop_id": "green_robot", "name_ko": "로봇", "aliases_ko": ["초록 로봇"], "count": 1},
+    {"prop_id": "desk_clock", "name_ko": "시계", "aliases_ko": ["탁상시계"], "count": 1},
+    {"prop_id": "paper_cup", "name_ko": "종이컵", "aliases_ko": ["컵"], "count": 1},
+    {"prop_id": "stainless_mug", "name_ko": "머그", "aliases_ko": ["스테인리스컵"], "count": 1}
+  ]
+}
