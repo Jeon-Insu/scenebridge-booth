@@ -113,3 +113,13 @@ def test_the_launcher_passes_the_booth_table_size(tmp_path):
                           "--venues", str(_file(tmp_path, background))],
                          capture_output=True, text=True, check=True).stdout.splitlines()
     assert "--/exts/gist.tabletop_twin/table_length_m=1.8" in out
+
+
+def test_a_venue_cutaway_file_reaches_isaac(tmp_path):
+    background = tmp_path / "bg.usda"
+    background.write_text("#usda 1.0\n")
+    path = tmp_path / "venues.json"
+    path.write_text(json.dumps({"venues": {"room": {"background": str(background), "offset_m": [1, 2, .75],
+                                                    "cutaway": str(tmp_path / "cut.json")}}}), encoding="utf-8")
+    args = venues.isaac_args(venues.load_venue("room", path))
+    assert f"--/exts/gist.tabletop_twin/cutaway_path={tmp_path / 'cut.json'}" in args

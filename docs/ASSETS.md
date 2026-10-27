@@ -34,7 +34,7 @@ usd/venues/source/Dongshin_Final/...        ← 함께 온 파일 전부
 
 ## 2. 소품 3D 모델 (Meshy에서 만든 USDZ)
 
-전달받는 것: 소품 10종의 `model.usdz`. Meshy로 만들고 Meshy 형식(Y-up, 단위 0.3048m) 그대로 내보낸 파일이다.
+전달받는 것: Meshy로 만든 소품 모델 `model.usdz` (학습 소품 10종 + 화분 + 회색 마스코트). Meshy로 만들고 Meshy 형식(Y-up, 단위 0.3048m) 그대로 내보낸 파일이다.
 
 넣는 위치는 **`assets/props/<prop_id>/model.usdz`**이다. 파일 이름은 반드시 `model.usdz`다.
 
@@ -50,12 +50,16 @@ usd/venues/source/Dongshin_Final/...        ← 함께 온 파일 전부
 | `desk_clock` | 시계 | `assets/props/desk_clock/model.usdz` |
 | `paper_cup` | 종이컵 | `assets/props/paper_cup/model.usdz` |
 | `stainless_mug` | 머그 | `assets/props/stainless_mug/model.usdz` |
+| `potted_plant` | 화분 | `assets/props/potted_plant/model.usdz` |
+| `gist_mascot_grey` | 회색 마스코트 | `assets/props/gist_mascot_grey/model.usdz` |
+
+휴대폰·책·페트병은 간단한 형상 USD가 저장소에 들어 있어 따로 받을 것이 없다. 컵은 종이컵 모델을 함께 쓴다.
 
 - **바로 옆 `model_placed.usda`(저장소에 있음)가 `./model.usdz`를 참조한다.**
   - 이 파일이 Meshy 좌표를 테이블 좌표(Z-up, 미터, 바닥 중심 원점)로 바꾸고 크기를 맞춘다.
   - 그래서 **전달받은 Meshy 파일을 바꾸지 않고 그대로** 넣어야 한다. 다른 Meshy 모델로 바꾸면 크기와 바닥 위치가 어긋난다.
 - 모델이 없으면 트윈에서 그 소품이 보이지 않는다(참조 실패). 인식과 추적에는 영향이 없다. 인식은 학습된 검출기가 하기 때문이다.
-- 확인 방법: `ls assets/props/*/model.usdz`로 10개가 있는지 본다.
+- 확인 방법: `ls assets/props/*/model.usdz`로 12개가 있는지 본다.
 
 ### 새 소품을 추가하려면
 

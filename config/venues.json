@@ -20,7 +20,8 @@
           1.0,
           0.35
         ]
-      }
+      },
+      "cutaway": "usd/venues/dongshin_ai_classroom_cutaway.json"
     }
   }
 }

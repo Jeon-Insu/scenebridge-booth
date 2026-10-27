@@ -31,6 +31,7 @@ from .camera_layout import split_camera_analysis_mosaic
 from .focus import read_linked_preview, resolve_focus_ids, render_camera_focus
 from .contact import read_contact_geometry, resolve_placement, inspect_contact, PLACEMENT_MODES, set_table_size
 from .tracked_pose import display_label, shown_yaw_deg, tracked_yaw_deg
+from .flythrough import duration as fly_duration, pose_at as fly_pose_at, stages_due as fly_stages_due
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
@@ -203,6 +204,21 @@ class TabletopTwinExtension(AssetStudioMixin, omni.ext.IExt):
             if value is not None:
                 TABLE_SIZE_M[index] = float(value)
         set_table_size(TABLE_SIZE_M[0], TABLE_SIZE_M[1])
+        # School-to-table fly-in (venue "cutaway", tools/make_cutaway.py): camera keyframes + floors to hide.
+        self._cutaway = None
+        cutaway_path = settings.get_as_string(f"{prefix}/cutaway_path")
+        if cutaway_path:
+            try:
+                self._cutaway = json.loads(Path(cutaway_path).read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as exc:
+                carb.log_warn(f"[GIST Tabletop Twin] Could not read cutaway plan {cutaway_path}: {exc}")
+        self._fly_start = None
+        self._fly_prev_t = -1.0
+        self._fly_hidden: list[str] = []
+        self._fly_autoplay_at = None
+        autoplay = settings.get(f"{prefix}/cutaway_autoplay_s")
+        if self._cutaway and autoplay and float(autoplay) > 0:
+            self._fly_autoplay_at = time.monotonic() + float(autoplay)
         self._stale_remove_seconds = max(
             0.1, settings.get_as_float(f"{prefix}/stale_remove_seconds")
         )
@@ -437,6 +453,11 @@ class TabletopTwinExtension(AssetStudioMixin, omni.ext.IExt):
 
     def _on_update(self, _event) -> None:
         now = time.monotonic()
+        if self._fly_autoplay_at is not None and now >= self._fly_autoplay_at:
+            self._fly_autoplay_at = None
+            self._start_flythrough()
+        if self._fly_start is not None:
+            self._step_flythrough(now)
         if self._auto_open_window and now < self._startup_layout_guard_until:
             self._hide_auxiliary_panels()
         if self._agent_scroll_restore_frames:
@@ -1033,6 +1054,64 @@ class TabletopTwinExtension(AssetStudioMixin, omni.ext.IExt):
         return {"object_ids": list(self._focused_object_ids),
                 "object_names": {oid: self._object_short_names[oid] for oid in self._records if oid in self._object_short_names},
                 "source": "USD selection from Stage, viewport or agent; not physical movement"}
+
+    def _set_viewport_camera(self, eye, target) -> bool:
+        try:
+            from omni.kit.viewport.utility import get_active_viewport
+            from omni.kit.viewport.utility.camera_state import ViewportCameraState
+            viewport = get_active_viewport()
+            if viewport is None:
+                return False
+            viewport.camera_path = Sdf.Path("/OmniverseKit_Persp")
+            state = ViewportCameraState("/OmniverseKit_Persp", viewport)
+            state.set_position_world(Gf.Vec3d(*eye), True)
+            state.set_target_world(Gf.Vec3d(*target), True)
+            return True
+        except (ImportError, RuntimeError, AttributeError) as exc:
+            carb.log_warn(f"[GIST Tabletop Twin] Could not move the camera: {exc}")
+            return False
+
+    def _set_fly_visibility(self, paths, visible: bool) -> None:
+        stage = omni.usd.get_context().get_stage()
+        if stage is None:
+            return
+        token = UsdGeom.Tokens.inherited if visible else UsdGeom.Tokens.invisible
+        with Sdf.ChangeBlock():
+            for path in paths:
+                prim = stage.GetPrimAtPath(path)
+                if prim and prim.IsValid() and prim.IsA(UsdGeom.Imageable):
+                    UsdGeom.Imageable(prim).CreateVisibilityAttr().Set(token)
+
+    def _start_flythrough(self) -> None:
+        """'학교에서 테이블로': from the school overview down to the table, peeling floors off on the way."""
+        if not self._cutaway:
+            carb.log_warn("[GIST Tabletop Twin] No cutaway plan for this venue (config/venues.json \"cutaway\")")
+            return
+        self._restore_flythrough(move_camera=False)
+        self._fly_start = time.monotonic()
+        self._fly_prev_t = -1.0
+
+    def _step_flythrough(self, now: float) -> None:
+        t = now - self._fly_start
+        keys = self._cutaway["keyframes"]
+        eye, target = fly_pose_at(keys, t)
+        self._set_viewport_camera(eye, target)
+        for stage_item in fly_stages_due(self._cutaway["stages"], self._fly_prev_t, t):
+            self._set_fly_visibility(stage_item["paths"], False)
+            self._fly_hidden.extend(stage_item["paths"])
+        self._fly_prev_t = t
+        if t >= fly_duration(keys):
+            self._fly_start = None
+
+    def _restore_flythrough(self, move_camera: bool = True) -> None:
+        """'처음으로': show everything again and go back to the school overview."""
+        self._fly_start = None
+        if self._fly_hidden:
+            self._set_fly_visibility(self._fly_hidden, True)
+            self._fly_hidden = []
+        if move_camera and self._cutaway:
+            first = self._cutaway["keyframes"][0]
+            self._set_viewport_camera(first["eye"], first["target"])
 
     def _frame_demo_context(self) -> bool:
         """Fit the physical table tightly in the active Viewport."""
@@ -2231,6 +2310,11 @@ class TabletopTwinExtension(AssetStudioMixin, omni.ext.IExt):
     def _build_agent_tab(self) -> None:
         # Build once: tracking/status/history updates must not recreate the input.
         with ui.VStack(spacing=6):
+            with ui.HStack(height=32, spacing=6):
+                ui.Button("학교에서 테이블로", clicked_fn=self._start_flythrough, enabled=bool(self._cutaway),
+                          tooltip="동신여고 전경에서 위층을 차례로 걷어내며 테이블까지 다가갑니다.")
+                ui.Button("처음으로", clicked_fn=self._restore_flythrough, enabled=bool(self._cutaway),
+                          tooltip="숨긴 층을 모두 되살리고 학교 전경으로 돌아갑니다.")
             ui.Label("장면 에이전트 대화", height=26, style={"font_size": 20})
             self._agent_status_label = ui.Label("", height=20, style={"color": 0xFF8FD8FF})
             self._agent_provider_label = ui.Label("", height=0, word_wrap=True)

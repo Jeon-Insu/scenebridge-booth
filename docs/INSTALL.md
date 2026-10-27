@@ -49,6 +49,8 @@ outputs/models/orientation_head.pt
 | 파일 | 내용 |
 |---|---|
 | `prop_detector_a1.pth` (128MB) | RF-DETR-Seg nano, 소품 10종, Isaac 합성 데이터로 학습 |
+
+일반 물체(컵·휴대폰·책·화분·페트병·회색 마스코트)를 찾는 COCO 80종 모델(`rf-detr-seg-nano.pt`)은 **처음 실행할 때 인터넷에서 자동으로 받아** `~/.roboflow/models/`에 저장된다. 부스에 인터넷이 없으면 미리 한 번 실행해 두거나 이 파일을 같은 위치에 복사한다.
 | `orientation_head.pt` | DINOv2-small 특징 위에 붙인 선형 방향 분류기 |
 
 ## 3. 따로 전달받는 파일

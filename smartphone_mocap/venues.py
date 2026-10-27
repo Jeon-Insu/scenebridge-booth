@@ -23,6 +23,7 @@ class Venue:
     yaw_deg: float
     note: str = ""
     camera: dict | None = None     # {"eye": [x, y, z], "target": [x, y, z]} in table coordinates
+    cutaway: Path | None = None    # school-to-table fly-in plan (tools/make_cutaway.py)
 
 
 def table_to_world(venue: Venue, point) -> tuple[float, float, float]:
@@ -52,8 +53,12 @@ def load_venue(name: str, path=None, *, check_files: bool = True) -> Venue:
             source = str((background.parent / source).resolve())
         if not Path(source).is_file():
             raise VenueError(f"장소 '{name}'의 원본 USD가 없습니다: {source}")
+    cutaway = None
+    if raw.get("cutaway"):
+        cutaway = Path(raw["cutaway"])
+        cutaway = cutaway if cutaway.is_absolute() else (ROOT / cutaway).resolve()
     return Venue(name, background, tuple(float(v) for v in raw["offset_m"]), float(raw.get("yaw_deg", 0.0)),
-                 str(raw.get("note", "")), raw.get("camera"))
+                 str(raw.get("note", "")), raw.get("camera"), cutaway)
 
 
 def isaac_args(venue: Venue, table_size_m=None) -> list[str]:
@@ -62,6 +67,8 @@ def isaac_args(venue: Venue, table_size_m=None) -> list[str]:
             f"{SETTING}world_offset_y={y:g}", f"{SETTING}world_offset_z={z:g}"]
     if table_size_m is not None:  # booth.json rig.workspace_size_m: the twin draws a table of this size
         args += [f"{SETTING}table_length_m={float(table_size_m[0]):g}", f"{SETTING}table_width_m={float(table_size_m[1]):g}"]
+    if venue.cutaway is not None:
+        args.append(f"{SETTING}cutaway_path={venue.cutaway}")
     if venue.camera:
         for key in ("eye", "target"):
             for axis, value in zip("xyz", table_to_world(venue, venue.camera[key])):
