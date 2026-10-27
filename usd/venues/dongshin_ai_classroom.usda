@@ -10,11 +10,6 @@ over "Dongshin_Main"
 {
     over "Rooms"
     {
-        over "Teachers_Office" (
-            active = false
-        )
-        {
-        }
         over "AI_Creative_Classroom"
         {
             over "InteriorAssets"

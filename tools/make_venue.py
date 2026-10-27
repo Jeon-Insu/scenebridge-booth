@@ -19,7 +19,7 @@ from smartphone_mocap.venue_layout import overlapping, table_pose_facing_wall  #
 
 SOURCE = ROOT / "usd/venues/source/Dongshin_Final/Dongshin_Final.usda"
 ROOM = "/Dongshin_Main/Rooms/AI_Creative_Classroom"
-OTHER_ROOMS = ("Teachers_Office",)
+OTHER_ROOMS = ()   # rooms to switch off entirely (the 3rd-floor staff room stays: the fly-in hides it with its floor)
 TABLE_SIZE = (1.8, 0.75)   # default booth table; --table to change
 TABLE_HEIGHT_M = 0.75
 OUT = ROOT / "usd/venues/dongshin_ai_classroom.usda"

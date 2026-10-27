@@ -275,7 +275,9 @@ class TabletopTwinExtension(AssetStudioMixin, omni.ext.IExt):
         self._socket: socket.socket | None = None
         self._thread: threading.Thread | None = None
         self._message_translation = (0.0, 0.0, 0.0)
-        self._message_yaw_rad = 0.0
+        # Venue yaw (config/venues.json) until a tracking message brings its own rig_to_scene.
+        self._venue_yaw_deg = float(settings.get(f"{prefix}/table_yaw_deg") or 0.0)
+        self._message_yaw_rad = math.radians(self._venue_yaw_deg)
         # Observation/replay input is independent of the Isaac timeline.  A
         # timeline pause alone therefore does not freeze the mirrored twin.
         # Keep an explicit gate so Pause also freezes incoming UDP/replay data.
@@ -755,7 +757,7 @@ class TabletopTwinExtension(AssetStudioMixin, omni.ext.IExt):
             self._message_translation = tuple(float(value) for value in translation)
         else:
             self._message_translation = (0.0, 0.0, 0.0)
-        yaw_deg = float(placement.get("yaw_deg", 0.0))
+        yaw_deg = float(placement.get("yaw_deg", self._venue_yaw_deg))
         self._message_yaw_rad = math.radians(yaw_deg if math.isfinite(yaw_deg) else 0.0)
         table_prim = stage.GetPrimAtPath("/World/TabletopDemo/Table")
         if table_prim.IsValid():

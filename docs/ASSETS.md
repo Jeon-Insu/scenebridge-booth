@@ -15,7 +15,7 @@ usd/venues/source/Dongshin_Final/...        ← 함께 온 파일 전부
 
 - `usd/venues/dongshin_ai_classroom.usda`(저장소에 있음)가 이 파일을 `./source/Dongshin_Final/Dongshin_Final.usda`로 참조한다.
   - 참조만 하고 원본은 고치지 않는다.
-  - 교무실과 테이블 주변 책상·의자 20개를 화면에서 끈다.
+  - 테이블 주변 책상·의자 28개를 화면에서 끈다. 3층 교무실은 보이게 두고, 연출 버튼이 3층과 함께 숨긴다.
 - 확인 방법:
   ```bash
   python3 tools/venue_args.py dongshin_ai_classroom

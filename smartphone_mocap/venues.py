@@ -64,7 +64,8 @@ def load_venue(name: str, path=None, *, check_files: bool = True) -> Venue:
 def isaac_args(venue: Venue, table_size_m=None) -> list[str]:
     x, y, z = venue.offset_m
     args = [f"{SETTING}background_stage_path={venue.background}", f"{SETTING}world_offset_x={x:g}",
-            f"{SETTING}world_offset_y={y:g}", f"{SETTING}world_offset_z={z:g}"]
+            f"{SETTING}world_offset_y={y:g}", f"{SETTING}world_offset_z={z:g}",
+            f"{SETTING}table_yaw_deg={venue.yaw_deg:g}"]   # until the tracker's first message carries it
     if table_size_m is not None:  # booth.json rig.workspace_size_m: the twin draws a table of this size
         args += [f"{SETTING}table_length_m={float(table_size_m[0]):g}", f"{SETTING}table_width_m={float(table_size_m[1]):g}"]
     if venue.cutaway is not None:

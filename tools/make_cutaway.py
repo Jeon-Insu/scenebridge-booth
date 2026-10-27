@@ -27,20 +27,22 @@ M = "/Dongshin_Main"
 CEILING_Z = 7.05          # 2층(AI 창의교실) 천장 높이
 # (시각 s, 이름, 통째로 숨길 프림, 이 높이보다 완전히 위인 공용 메시도 숨김)
 FLOOR_STAGES = [
-    (2.5, "지붕·6층", [f"{M}/Floors/Floor_06", f"{M}/Common/Roof"], 17.0),
-    (3.5, "5층", [f"{M}/Floors/Floor_05"], 13.65),
-    (4.5, "4층", [f"{M}/Floors/Floor_04"], 10.35),
-    (5.5, "3층·교무실", [f"{M}/Floors/Floor_03", f"{M}/Rooms/Teachers_Office"], 6.95),
+    (4.0, "지붕·6층", [f"{M}/Floors/Floor_06", f"{M}/Common/Roof"], 17.0),
+    (5.2, "5층", [f"{M}/Floors/Floor_05"], 13.65),
+    (6.4, "4층", [f"{M}/Floors/Floor_04"], 10.35),
+    (7.6, "3층·교무실", [f"{M}/Floors/Floor_03", f"{M}/Rooms/Teachers_Office"], 6.95),
 ]
-CEILING_STAGE_AT = 6.5
+CEILING_STAGE_AT = 8.8
 ASSET_GROUPS = {"Furniture", "Books", "BooksAndFiles", "PhotoFrames"}   # groups under InteriorAssets
 SHARED = [f"{M}/Common/Exterior", f"{M}/Common/CommonExteriorAndSite", f"{M}/BuildingRepairs/Geometry",
           f"{M}/Common/Stairs", f"{M}/Common/Corridors", f"{M}/Common/WestRoundStairCore"]
-# 카메라: 정면 위 전경 → 교실 동 위 → 인형의 집 → 테이블(장소 프리셋 시점)
-KEYS = [(0.0, [20.0, -70.0, 40.0], [55.0, 5.0, 8.0]),
-        (4.0, [47.5, -24.0, 22.0], [47.5, 2.0, 5.0]),
-        (8.0, [49.0, -8.0, 14.0], [46.0, 3.0, 4.5])]
-FINAL_T = 12.0
+# 카메라: 잔디밭 쪽(남, -Y)이 정면이고 지형은 동쪽이 높다. 언덕 위 동쪽 끝에서 대각선으로 서쪽의 교실을
+# 바라보며 건물 전체가 사선으로 보이게 시작 → 다가가며 위층을 걷어냄 → 천장이 열린 교실 위 → 테이블(장소 프리셋 시점)
+KEYS = [(0.0, [165.0, -60.0, 48.0], [62.0, 6.0, 8.0]),
+        (4.0, [112.0, -38.0, 32.0], [52.0, 4.0, 6.0]),
+        (8.0, [66.0, -16.0, 18.0], [47.0, 3.0, 5.0]),
+        (11.0, [52.0, -2.5, 11.0], [46.0, 3.5, 4.6])]
+FINAL_T = 14.0
 
 
 def main() -> int:

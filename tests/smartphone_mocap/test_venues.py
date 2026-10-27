@@ -52,7 +52,7 @@ def test_venue_args_cli_prints_one_argument_per_line(tmp_path):
     out = subprocess.run([sys.executable, str(ROOT / "tools/venue_args.py"), "room",
                           "--venues", str(_file(tmp_path, background))],
                          capture_output=True, text=True, check=True).stdout.splitlines()
-    assert out[0].startswith("--/exts/gist.tabletop_twin/background_stage_path=") and len(out) == 4
+    assert out[0].startswith("--/exts/gist.tabletop_twin/background_stage_path=") and len(out) == 5
 
 
 def test_venue_args_cli_refuses_a_background_that_is_not_installed(tmp_path):
@@ -75,7 +75,7 @@ def test_a_venue_camera_becomes_world_eye_and_target_settings(tmp_path):
                                                     "camera": {"eye": [0, -1, 1], "target": [0, 1, 0]}}}}))
     args = venues.isaac_args(venues.load_venue("room", path))
     assert "--/exts/gist.tabletop_twin/camera_eye_x=11" in args and "--/exts/gist.tabletop_twin/camera_eye_z=5" in args
-    assert "--/exts/gist.tabletop_twin/camera_target_x=9" in args and len(args) == 10
+    assert "--/exts/gist.tabletop_twin/camera_target_x=9" in args and len(args) == 11
 
 
 def test_a_wrapper_whose_source_usd_is_missing_is_refused(tmp_path):
@@ -123,3 +123,12 @@ def test_a_venue_cutaway_file_reaches_isaac(tmp_path):
                                                     "cutaway": str(tmp_path / "cut.json")}}}), encoding="utf-8")
     args = venues.isaac_args(venues.load_venue("room", path))
     assert f"--/exts/gist.tabletop_twin/cutaway_path={tmp_path / 'cut.json'}" in args
+
+
+def test_isaac_turns_the_table_before_the_first_tracking_message(tmp_path):
+    background = tmp_path / "bg.usda"
+    background.write_text("#usda 1.0\n")
+    path = tmp_path / "venues.json"
+    path.write_text(json.dumps({"venues": {"room": {"background": str(background), "offset_m": [1, 2, .75],
+                                                    "yaw_deg": 90}}}), encoding="utf-8")
+    assert "--/exts/gist.tabletop_twin/table_yaw_deg=90" in venues.isaac_args(venues.load_venue("room", path))
