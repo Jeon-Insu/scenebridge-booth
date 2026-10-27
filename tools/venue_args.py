@@ -18,15 +18,19 @@ def main() -> int:
     if "--venues" in args:  # another presets file (tests, or a second site)
         at = args.index("--venues")
         venues_path, args = args[at + 1], args[:at] + args[at + 2:]
+    table_size = None
     if len(args) == 2 and args[0] == "--config":
-        name = json.loads(Path(args[1]).read_text(encoding="utf-8")).get("venue", "dongshin_ai_classroom")
+        config = json.loads(Path(args[1]).read_text(encoding="utf-8"))
+        name = config.get("venue", "dongshin_ai_classroom")
+        table_size = (config.get("rig", {}).get("workspace_size_m") or [None, None])[:2]
+        table_size = table_size if None not in table_size else None
     elif len(args) == 1:
         name = args[0]
     else:
         print(__doc__)
         return 2
     try:
-        print("\n".join(isaac_args(load_venue(name, venues_path))))
+        print("\n".join(isaac_args(load_venue(name, venues_path), table_size)))
     except VenueError as exc:
         print(f"[문제] {exc}", file=sys.stderr)
         return 1

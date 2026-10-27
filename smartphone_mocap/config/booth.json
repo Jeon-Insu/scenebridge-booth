@@ -4,7 +4,7 @@
   "rig": {
     "name": "venue_20261025_board_extrinsics",
     "workspace_size_m": [
-      1.25,
+      1.8,
       0.75,
       0.35
     ],
@@ -115,7 +115,7 @@
       -0.12
     ],
     "workspace_max_xyz": [
-      1.35,
+      1.9,
       0.85,
       0.65
     ],

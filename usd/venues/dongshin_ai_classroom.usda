@@ -21,6 +21,11 @@ over "Dongshin_Main"
             {
                 over "Furniture"
                 {
+                    over "C04_05" (
+                        active = false
+                    )
+                    {
+                    }
                     over "C04_06" (
                         active = false
                     )
@@ -51,7 +56,17 @@ over "Dongshin_Main"
                     )
                     {
                     }
+                    over "C06_22" (
+                        active = false
+                    )
+                    {
+                    }
                     over "C06_23" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C06_24" (
                         active = false
                     )
                     {
@@ -71,12 +86,32 @@ over "Dongshin_Main"
                     )
                     {
                     }
+                    over "C09_22" (
+                        active = false
+                    )
+                    {
+                    }
                     over "C09_23" (
                         active = false
                     )
                     {
                     }
+                    over "C09_24" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C10_09" (
+                        active = false
+                    )
+                    {
+                    }
                     over "C10_10" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "C10_11" (
                         active = false
                     )
                     {
@@ -107,6 +142,11 @@ over "Dongshin_Main"
                     {
                     }
                     over "D19_05" (
+                        active = false
+                    )
+                    {
+                    }
+                    over "D19_06" (
                         active = false
                     )
                     {

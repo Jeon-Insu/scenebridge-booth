@@ -38,7 +38,7 @@ def test_unknown_names_and_missing_backgrounds_are_refused_in_korean(tmp_path):
 def test_the_project_preset_is_the_dongshin_classroom():
     # The background USD is delivered separately, so read the preset without requiring it.
     venue = venues.load_venue("dongshin_ai_classroom", check_files=False)
-    assert venue.offset_m == (45.011, 3.195, 4.535) and venue.yaw_deg == 90.0
+    assert venue.offset_m == (45.011, 2.92, 4.535) and venue.yaw_deg == 90.0  # 1.8 m table
 
 
 def test_the_tracker_can_read_a_venue_whose_background_is_not_installed(tmp_path):
@@ -94,3 +94,22 @@ def test_the_launcher_reads_the_venue_from_the_tracker_config(tmp_path):
                           "--venues", str(_file(tmp_path, background))],
                          capture_output=True, text=True, check=True).stdout.splitlines()
     assert any("world_offset_x=1" in line for line in out)
+
+
+def test_isaac_gets_the_table_size_too(tmp_path):
+    background = tmp_path / "bg.usda"
+    background.write_text("#usda 1.0\n")
+    args = venues.isaac_args(venues.load_venue("room", _file(tmp_path, background)), table_size_m=(1.8, 0.75))
+    assert "--/exts/gist.tabletop_twin/table_length_m=1.8" in args
+    assert "--/exts/gist.tabletop_twin/table_width_m=0.75" in args
+
+
+def test_the_launcher_passes_the_booth_table_size(tmp_path):
+    config = tmp_path / "booth.json"
+    config.write_text(json.dumps({"venue": "room", "rig": {"workspace_size_m": [1.8, 0.75, 0.35]}}))
+    background = tmp_path / "bg.usda"
+    background.write_text("#usda 1.0\n")
+    out = subprocess.run([sys.executable, str(ROOT / "tools/venue_args.py"), "--config", str(config),
+                          "--venues", str(_file(tmp_path, background))],
+                         capture_output=True, text=True, check=True).stdout.splitlines()
+    assert "--/exts/gist.tabletop_twin/table_length_m=1.8" in out

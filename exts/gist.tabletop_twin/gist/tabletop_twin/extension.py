@@ -29,12 +29,18 @@ from .simulation_mode import SimulationMode
 import omni.timeline
 from .camera_layout import split_camera_analysis_mosaic
 from .focus import read_linked_preview, resolve_focus_ids, render_camera_focus
-from .contact import read_contact_geometry, resolve_placement, inspect_contact, PLACEMENT_MODES
+from .contact import read_contact_geometry, resolve_placement, inspect_contact, PLACEMENT_MODES, set_table_size
 from .tracked_pose import display_label, shown_yaw_deg, tracked_yaw_deg
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[4]
-TABLE_ASSET = PROJECT_ROOT / "assets" / "tabletop_demo" / "table_125x75x75.usda"
+# Booth table size (settings table_length_m / table_width_m, from booth.json rig.workspace_size_m via venue_args).
+TABLE_SIZE_M = [1.25, 0.75, 0.75]
+
+
+def table_asset_path() -> Path:
+    cm = [int(round(v * 100)) for v in TABLE_SIZE_M]
+    return PROJECT_ROOT / "assets" / "tabletop_demo" / f"table_{cm[0]}x{cm[1]}x{cm[2]}.usda"
 CATALOG_PATH = PROJECT_ROOT / "assets" / "tabletop_decor" / "catalog.json"
 STATE_PATH = PROJECT_ROOT / "outputs" / "tabletop_twin" / "scene_state.json"
 CAMERA_PREVIEW_PATH = PROJECT_ROOT / "outputs" / "tabletop_camera_mosaic.jpg"
@@ -73,7 +79,7 @@ def _capture_viewport_interaction_frame(
             "north": [0.0, 1.0, 0.0],
             "up": [0.0, 0.0, 1.0],
         },
-        "workspace_bounds_xy": [0.0, 1.25, 0.0, 0.75],
+        "workspace_bounds_xy": [0.0, TABLE_SIZE_M[0], 0.0, TABLE_SIZE_M[1]],
         "viewport": {"available": False},
     }
     if stage is None or viewport is None:
@@ -192,6 +198,11 @@ class TabletopTwinExtension(AssetStudioMixin, omni.ext.IExt):
         self._background_stage_path = settings.get_as_string(
             f"{prefix}/background_stage_path"
         )
+        for index, key in enumerate(("table_length_m", "table_width_m")):
+            value = settings.get(f"{prefix}/{key}")
+            if value is not None:
+                TABLE_SIZE_M[index] = float(value)
+        set_table_size(TABLE_SIZE_M[0], TABLE_SIZE_M[1])
         self._stale_remove_seconds = max(
             0.1, settings.get_as_float(f"{prefix}/stale_remove_seconds")
         )
@@ -684,7 +695,7 @@ class TabletopTwinExtension(AssetStudioMixin, omni.ext.IExt):
         table_prim = stage.GetPrimAtPath("/World/TabletopDemo/Table")
         if not table_prim.IsValid():
             table_prim = stage.DefinePrim("/World/TabletopDemo/Table", "Xform")
-            table_prim.GetReferences().AddReference(str(TABLE_ASSET))
+            table_prim.GetReferences().AddReference(str(table_asset_path()))
         self._set_table_transform(table_prim)
         marker = table_prim.GetAttribute("gist:managedByTabletopTwin")
         if not marker:
@@ -1734,7 +1745,7 @@ class TabletopTwinExtension(AssetStudioMixin, omni.ext.IExt):
                 if not all(math.isfinite(value) for value in values):
                     raise ValueError(f"{field}: 값이 유한한 수여야 합니다.")
                 if field == "xyz":
-                    if not (0.0 <= values[0] <= 1.25 and 0.0 <= values[1] <= 0.75):
+                    if not (0.0 <= values[0] <= TABLE_SIZE_M[0] and 0.0 <= values[1] <= TABLE_SIZE_M[1]):
                         raise ValueError("이동 대상은 테이블 범위 안에 있어야 합니다.")
                     # An arbitrary USD pivot can be below Z=0 while all geometry
                     # is above the table. Contact checks use geometry, not pivot Z.
@@ -1964,8 +1975,8 @@ class TabletopTwinExtension(AssetStudioMixin, omni.ext.IExt):
             "written_at_ns": time.time_ns(),
             "table": {
                 "prim_path": "/World/TabletopDemo/Table",
-                "size_m": [1.25, 0.75, 0.75],
-                "asset_uri": str(TABLE_ASSET),
+                "size_m": list(TABLE_SIZE_M),
+                "asset_uri": str(table_asset_path()),
             },
             "background_stage_path": self._background_stage_path,
             "catalog": {
@@ -2168,7 +2179,7 @@ class TabletopTwinExtension(AssetStudioMixin, omni.ext.IExt):
                     "Detector: RF-DETR-Seg-Nano | Mask: learned per-instance",
                     height=22,
                 )
-                ui.Label("Table 1.25 x 0.75 m | tabletop Z=0", height=22)
+                ui.Label(f"Table {TABLE_SIZE_M[0]:g} x {TABLE_SIZE_M[1]:g} m | tabletop Z=0", height=22)
                 with ui.HStack(height=30, spacing=5):
                     ui.Button(
                         "Select Table",

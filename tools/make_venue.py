@@ -20,7 +20,7 @@ from smartphone_mocap.venue_layout import overlapping, table_pose_facing_wall  #
 SOURCE = ROOT / "usd/venues/source/Dongshin_Final/Dongshin_Final.usda"
 ROOM = "/Dongshin_Main/Rooms/AI_Creative_Classroom"
 OTHER_ROOMS = ("Teachers_Office",)
-TABLE_SIZE = (1.25, 0.75)
+TABLE_SIZE = (1.8, 0.75)   # default booth table; --table to change
 TABLE_HEIGHT_M = 0.75
 OUT = ROOT / "usd/venues/dongshin_ai_classroom.usda"
 
@@ -29,6 +29,7 @@ def main():
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--distance", type=float, default=1.6, help="벽에서 테이블 중심까지(m)")
     p.add_argument("--margin", type=float, default=1.0, help="테이블 둘레에서 가구를 숨길 여유(m)")
+    p.add_argument("--table", type=float, nargs=2, default=TABLE_SIZE, metavar=("L", "W"), help="테이블 가로·세로(m)")
     args = p.parse_args()
 
     stage = Usd.Stage.Open(str(SOURCE))
@@ -64,11 +65,12 @@ def main():
                 furniture[str(prim.GetPath())] = (b[0][0], b[0][1], b[1][0], b[1][1], b[0][2])
     floor_z = min(v[4] for v in furniture.values())
 
-    (ox, oy), yaw = table_pose_facing_wall(tuple(centre), tuple(normal), args.distance, TABLE_SIZE)
+    size = tuple(args.table)
+    (ox, oy), yaw = table_pose_facing_wall(tuple(centre), tuple(normal), args.distance, size)
     c, s = np.cos(np.radians(yaw)), np.sin(np.radians(yaw))
     R = np.array([[c, -s], [s, c]])
     corners = [tuple(np.array([ox, oy]) + R @ np.array(v))
-               for v in ((0, 0), (TABLE_SIZE[0], 0), (TABLE_SIZE[0], TABLE_SIZE[1]), (0, TABLE_SIZE[1]))]
+               for v in ((0, 0), (size[0], 0), (size[0], size[1]), (0, size[1]))]
     hidden = overlapping({k: v[:4] for k, v in furniture.items()}, corners, args.margin)
 
     lines = ["#usda 1.0", "(", '    defaultPrim = "Dongshin_Main"', "    metersPerUnit = 1",

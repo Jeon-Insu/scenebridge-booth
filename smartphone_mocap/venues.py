@@ -56,10 +56,12 @@ def load_venue(name: str, path=None, *, check_files: bool = True) -> Venue:
                  str(raw.get("note", "")), raw.get("camera"))
 
 
-def isaac_args(venue: Venue) -> list[str]:
+def isaac_args(venue: Venue, table_size_m=None) -> list[str]:
     x, y, z = venue.offset_m
     args = [f"{SETTING}background_stage_path={venue.background}", f"{SETTING}world_offset_x={x:g}",
             f"{SETTING}world_offset_y={y:g}", f"{SETTING}world_offset_z={z:g}"]
+    if table_size_m is not None:  # booth.json rig.workspace_size_m: the twin draws a table of this size
+        args += [f"{SETTING}table_length_m={float(table_size_m[0]):g}", f"{SETTING}table_width_m={float(table_size_m[1]):g}"]
     if venue.camera:
         for key in ("eye", "target"):
             for axis, value in zip("xyz", table_to_world(venue, venue.camera[key])):

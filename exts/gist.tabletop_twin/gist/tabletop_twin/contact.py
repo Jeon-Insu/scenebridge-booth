@@ -12,6 +12,11 @@ _spec.loader.exec_module(_math)
 resolve_placement = _math.resolve_placement
 inspect_contact = _math.inspect_contact
 PLACEMENT_MODES = _math.PLACEMENT_MODES
+TABLE_BOUNDS_XY = [0.0, 1.25, 0.0, 0.75]
+
+
+def set_table_size(length_m, width_m):
+    TABLE_BOUNDS_XY[:] = [0.0, float(length_m), 0.0, float(width_m)]
 
 
 def read_contact_geometry(stage, object_prim):
@@ -37,5 +42,5 @@ def read_contact_geometry(stage, object_prim):
             for side in product((0, 1), repeat=3):
                 point = matrix.Transform(Gf.Vec3d(*(high[i] if side[i] else low[i] for i in range(3))))
                 points.append(list(point))
-    return {"points_local_m": points, "table_bounds_xy_m": [0.0, 1.25, 0.0, 0.75],
+    return {"points_local_m": points, "table_bounds_xy_m": list(TABLE_BOUNDS_XY),
             "method": "usd_leaf_bounds_conservative"}
