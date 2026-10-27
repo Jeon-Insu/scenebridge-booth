@@ -1,7 +1,9 @@
-"""부스 소품 목록(config/booth_props.json) — v1.2: 학습한 소품(assets/props/catalog.json)만.
+"""부스 소품 목록(config/booth_props.json): 카탈로그(assets/props/catalog.json)에 있는 것만.
 
-학생은 prop_id(학습 소품 이름), 한국어 이름, 다른 이름, 개수만 적는다. 3D 모델·높이·대칭 여부는
+학생은 prop_id, 한국어 이름, 다른 이름, 개수만 적는다. 3D 모델·높이·대칭 여부와 어느 검출기가 찾는지는
 카탈로그에서 가져온다(높이는 tools/set_prop_height.py로 바꾼다).
+- 학습한 소품(기본): 우리 소품 검출기(A1)가 찾는다.
+- 일반 물체("detector": "coco"): 일반 물체 80종으로 학습된 검출기가 "coco_class" 이름으로 찾는다.
 """
 from __future__ import annotations
 
@@ -30,6 +32,8 @@ class BoothProp:
     model: Path
     height_m: float
     symmetric: bool
+    detector: str = "props"           # "props" = our trained detector, "coco" = general COCO detector
+    coco_class: str | None = None     # COCO class name when detector == "coco"
 
 
 def catalog(catalog_dir=None) -> list[dict]:
@@ -59,15 +63,19 @@ def load(path=None, *, catalog_dir=None) -> list[BoothProp]:
         prop_id = raw.get("prop_id")
         if prop_id not in entries:
             raise BoothPropsError(f"{index}번째 소품 '{prop_id}'은 학습한 소품이 아닙니다 "
-                                  "(tools/booth_check.py --props 로 목록 확인)")
+                                  "(카탈로그에 없음, tools/booth_check.py --props 로 목록 확인)")
         if not raw.get("name_ko"):
             raise BoothPropsError(f"{index}번째 소품 '{prop_id}'에 name_ko(한국어 이름)가 없습니다")
         count = raw.get("count", 1)
         if not isinstance(count, int) or count < 1:
             raise BoothPropsError(f"{index}번째 소품 '{prop_id}'의 count는 1 이상의 정수여야 합니다")
         entry = entries[prop_id]
+        detector = str(entry.get("detector", "props"))
+        # The heading classifier only learned our trained props, so general objects never get a yaw.
+        symmetric = prop_id in SYMMETRIC_IDS or bool(entry.get("symmetric")) or detector == "coco"
         props.append(BoothProp(prop_id, str(raw["name_ko"]), tuple(aliases), count,
-                               root / entry["usd_uri"], float(entry["height_m"]), prop_id in SYMMETRIC_IDS))
+                               root / entry["usd_uri"], float(entry["height_m"]), symmetric,
+                               detector, entry.get("coco_class")))
     return props
 
 

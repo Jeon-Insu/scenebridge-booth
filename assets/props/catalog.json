@@ -212,6 +212,78 @@
         "size_policy": "User requested native USD size as assumed real size; bounding-box extent multiplied by metersPerUnit, not measured."
       },
       "source_usd_uri": "giraffe/model.usdz"
+    },
+    {
+      "asset_id": "cup",
+      "display_name_ko": "컵",
+      "usd_uri": "paper_cup/model_placed.usda",
+      "detector": "coco",
+      "coco_class": "cup",
+      "height_m": 0.1,
+      "height_source": "class_prior",
+      "note": "일반 물체: 학습 없이 COCO 80종 검출기가 찾는다. 모델은 간단한 형상(화분은 Meshy, 컵은 종이컵 모델)",
+      "detector_class": "cup",
+      "source_usd_uri": "paper_cup/model_placed.usda"
+    },
+    {
+      "asset_id": "cell_phone",
+      "display_name_ko": "휴대폰",
+      "usd_uri": "cell_phone/model_placed.usda",
+      "detector": "coco",
+      "coco_class": "cell phone",
+      "height_m": 0.012,
+      "height_source": "class_prior",
+      "note": "일반 물체: 학습 없이 COCO 80종 검출기가 찾는다. 모델은 간단한 형상(화분은 Meshy, 컵은 종이컵 모델)",
+      "detector_class": "cell phone",
+      "source_usd_uri": "cell_phone/model_placed.usda"
+    },
+    {
+      "asset_id": "book",
+      "display_name_ko": "책",
+      "usd_uri": "book/model_placed.usda",
+      "detector": "coco",
+      "coco_class": "book",
+      "height_m": 0.035,
+      "height_source": "class_prior",
+      "note": "일반 물체: 학습 없이 COCO 80종 검출기가 찾는다. 모델은 간단한 형상(화분은 Meshy, 컵은 종이컵 모델)",
+      "detector_class": "book",
+      "source_usd_uri": "book/model_placed.usda"
+    },
+    {
+      "asset_id": "potted_plant",
+      "display_name_ko": "화분",
+      "usd_uri": "potted_plant/model_placed.usda",
+      "detector": "coco",
+      "coco_class": "potted plant",
+      "height_m": 0.3,
+      "height_source": "class_prior",
+      "note": "일반 물체: 학습 없이 COCO 80종 검출기가 찾는다. 모델은 간단한 형상(화분은 Meshy, 컵은 종이컵 모델)",
+      "detector_class": "potted plant",
+      "source_usd_uri": "potted_plant/model_placed.usda"
+    },
+    {
+      "asset_id": "bottle",
+      "display_name_ko": "페트병",
+      "usd_uri": "bottle/model_placed.usda",
+      "detector": "coco",
+      "coco_class": "bottle",
+      "height_m": 0.245,
+      "height_source": "class_prior",
+      "note": "일반 물체: 학습 없이 COCO 80종 검출기가 찾는다. 모델은 간단한 형상(화분은 Meshy, 컵은 종이컵 모델)",
+      "detector_class": "bottle",
+      "source_usd_uri": "bottle/model_placed.usda"
+    },
+    {
+      "asset_id": "gist_mascot_grey",
+      "display_name_ko": "회색 마스코트 인형",
+      "usd_uri": "gist_mascot_grey/model_placed.usda",
+      "detector": "coco",
+      "coco_class": "teddy bear",
+      "detector_class": "teddy bear",
+      "height_m": 0.2,
+      "height_source": "estimate",
+      "note": "2026-10-27 Meshy 웹에서 받은 회색 마스코트. 재학습 전까지 COCO 'teddy bear'로 찾는다. 높이는 추정",
+      "source_usd_uri": "gist_mascot_grey/model.usdz"
     }
   ]
 }

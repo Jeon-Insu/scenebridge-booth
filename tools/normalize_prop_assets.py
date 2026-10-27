@@ -51,6 +51,8 @@ def main() -> int:
         output = source.parent / PLACED_NAME
         output.unlink(missing_ok=True)
         normalized_asset(str(source), str(output), float(entry['height_m']))
+        # Keep the repo portable: reference the source next to the placed file, not this machine's path.
+        output.write_text(output.read_text(encoding='utf-8').replace(f'@{source}@', f'@./{source.name}@'), encoding='utf-8')
         catalog.set_usd_uri(asset_id, f'{asset_id}/{PLACED_NAME}')
         print(f'  {asset_id}: 높이 {entry["height_m"]} m로 정규화 → {output.name}')
         done += 1

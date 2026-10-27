@@ -5,15 +5,102 @@
     "고친 뒤: python3 tools/booth_check.py 로 확인하고 데모를 다시 켜세요."
   ],
   "props": [
-    {"prop_id": "gist_mascot", "name_ko": "마스코트", "aliases_ko": ["인형", "지스트 마스코트"], "count": 1},
-    {"prop_id": "giraffe", "name_ko": "기린", "aliases_ko": ["기린 인형"], "count": 1},
-    {"prop_id": "zebra", "name_ko": "얼룩말", "aliases_ko": [], "count": 1},
-    {"prop_id": "elephant", "name_ko": "코끼리", "aliases_ko": [], "count": 1},
-    {"prop_id": "dinosaur", "name_ko": "공룡", "aliases_ko": [], "count": 1},
-    {"prop_id": "devil_duck", "name_ko": "오리", "aliases_ko": ["빨간 오리"], "count": 1},
-    {"prop_id": "green_robot", "name_ko": "로봇", "aliases_ko": ["초록 로봇"], "count": 1},
-    {"prop_id": "desk_clock", "name_ko": "시계", "aliases_ko": ["탁상시계"], "count": 1},
-    {"prop_id": "paper_cup", "name_ko": "종이컵", "aliases_ko": ["컵"], "count": 1},
-    {"prop_id": "stainless_mug", "name_ko": "머그", "aliases_ko": ["스테인리스컵"], "count": 1}
+    {
+      "prop_id": "gist_mascot_grey",
+      "name_ko": "마스코트",
+      "aliases_ko": [
+        "인형",
+        "지스트 마스코트"
+      ],
+      "count": 1
+    },
+    {
+      "prop_id": "giraffe",
+      "name_ko": "기린",
+      "aliases_ko": [
+        "기린 인형"
+      ],
+      "count": 1
+    },
+    {
+      "prop_id": "zebra",
+      "name_ko": "얼룩말",
+      "aliases_ko": [],
+      "count": 1
+    },
+    {
+      "prop_id": "elephant",
+      "name_ko": "코끼리",
+      "aliases_ko": [],
+      "count": 1
+    },
+    {
+      "prop_id": "dinosaur",
+      "name_ko": "공룡",
+      "aliases_ko": [],
+      "count": 1
+    },
+    {
+      "prop_id": "devil_duck",
+      "name_ko": "오리",
+      "aliases_ko": [
+        "빨간 오리"
+      ],
+      "count": 1
+    },
+    {
+      "prop_id": "green_robot",
+      "name_ko": "로봇",
+      "aliases_ko": [
+        "초록 로봇"
+      ],
+      "count": 1
+    },
+    {
+      "prop_id": "cup",
+      "name_ko": "컵",
+      "aliases_ko": [
+        "종이컵",
+        "머그",
+        "텀블러"
+      ],
+      "count": 1
+    },
+    {
+      "prop_id": "cell_phone",
+      "name_ko": "휴대폰",
+      "aliases_ko": [
+        "핸드폰",
+        "스마트폰",
+        "폰"
+      ],
+      "count": 1
+    },
+    {
+      "prop_id": "book",
+      "name_ko": "책",
+      "aliases_ko": [
+        "다이어리",
+        "노트"
+      ],
+      "count": 1
+    },
+    {
+      "prop_id": "potted_plant",
+      "name_ko": "화분",
+      "aliases_ko": [
+        "식물"
+      ],
+      "count": 1
+    },
+    {
+      "prop_id": "bottle",
+      "name_ko": "페트병",
+      "aliases_ko": [
+        "물병",
+        "병"
+      ],
+      "count": 1
+    }
   ]
 }

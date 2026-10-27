@@ -1,0 +1,37 @@
+#usda 1.0
+(
+    defaultPrim = "BottleAsset"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "BottleAsset"
+{
+    def Cylinder "Body"
+    {
+        double radius = 0.035
+        double height = 0.18
+        token axis = "Z"
+        color3f[] primvars:displayColor = [(0.12, 0.48, 0.85)]
+        double3 xformOp:translate = (0, 0, 0.09)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+    def Cylinder "Neck"
+    {
+        double radius = 0.016
+        double height = 0.05
+        token axis = "Z"
+        color3f[] primvars:displayColor = [(0.16, 0.55, 0.92)]
+        double3 xformOp:translate = (0, 0, 0.205)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+    def Cylinder "Cap"
+    {
+        double radius = 0.018
+        double height = 0.015
+        token axis = "Z"
+        color3f[] primvars:displayColor = [(0.92, 0.92, 0.96)]
+        double3 xformOp:translate = (0, 0, 0.2375)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+}

@@ -48,9 +48,45 @@ def test_the_booth_list_sets_models_heights_counts_and_names(tmp_path):
     assert processor.class_height_m["giraffe"] == pytest.approx(0.18)
 
 
+def _trained_list(tmp_path):
+    path = tmp_path / "trained.json"
+    path.write_text(json.dumps({"props": [{"prop_id": "giraffe", "name_ko": "기린"},
+                                          {"prop_id": "zebra", "name_ko": "얼룩말"}]}, ensure_ascii=False),
+                    encoding="utf-8")
+    return str(path)
+
+
 def test_detector_gets_the_checkpoint_and_only_listed_props(tmp_path):
     seen = {}
-    PerceptionProcessor(_config(tmp_path), detector_factory=lambda **kw: seen.update(kw) or FakeDetector({}),
+    PerceptionProcessor(_config(tmp_path, booth_props=_trained_list(tmp_path)),
+                        detector_factory=lambda **kw: seen.update(kw) or FakeDetector({}),
                         orientation_factory=lambda **_: None)
     assert seen["checkpoint"].endswith("prop_detector_a1.pth")
     assert "giraffe" in seen["allowed_classes"] and "cup" not in seen["allowed_classes"]
+
+
+def _coco_list(tmp_path):
+    path = tmp_path / "list.json"
+    path.write_text(json.dumps({"props": [{"prop_id": "giraffe", "name_ko": "기린"},
+                                          {"prop_id": "cell_phone", "name_ko": "휴대폰"}]}, ensure_ascii=False),
+                    encoding="utf-8")
+    return str(path)
+
+
+def test_general_objects_get_a_second_coco_detector_with_our_names(tmp_path):
+    calls = []
+    PerceptionProcessor(_config(tmp_path, booth_props=_coco_list(tmp_path)),
+                        detector_factory=lambda **kw: calls.append(kw) or FakeDetector({}),
+                        orientation_factory=lambda **_: None)
+    props, coco = calls
+    assert props["checkpoint"].endswith("prop_detector_a1.pth") and props["allowed_classes"] == ["giraffe"]
+    assert coco["checkpoint"] is None and coco["allowed_classes"] == ["cell phone"]
+    assert coco["class_aliases"] == {"cell phone": "cell_phone"}
+
+
+def test_a_list_of_trained_props_only_makes_one_detector(tmp_path):
+    calls = []
+    PerceptionProcessor(_config(tmp_path, booth_props=_trained_list(tmp_path)),
+                        detector_factory=lambda **kw: calls.append(kw) or FakeDetector({}),
+                        orientation_factory=lambda **_: None)
+    assert len(calls) == 1

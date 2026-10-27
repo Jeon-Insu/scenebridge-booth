@@ -93,3 +93,23 @@ def test_booth_check_cli_lists_the_trained_props():
 def test_malformed_entries_are_refused_in_korean(tmp_path, entry, words):
     with pytest.raises(booth_props.BoothPropsError, match=words):
         booth_props.load(_list(tmp_path, [entry]), catalog_dir=_catalog(tmp_path))
+
+
+def _catalog_with_coco(tmp_path):
+    root = _catalog(tmp_path)
+    data = json.loads((root / "catalog.json").read_text(encoding="utf-8"))
+    (root / "cell_phone").mkdir()
+    (root / "cell_phone/model_placed.usda").write_text("#usda 1.0\n")
+    data["assets"].append({"asset_id": "cell_phone", "display_name_ko": "휴대폰", "usd_uri": "cell_phone/model_placed.usda",
+                           "detector": "coco", "coco_class": "cell phone", "height_m": 0.01})
+    (root / "catalog.json").write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    return root
+
+
+def test_a_general_object_comes_from_the_coco_detector_and_has_no_heading(tmp_path):
+    root = _catalog_with_coco(tmp_path)
+    giraffe, phone = booth_props.load(_list(tmp_path, [
+        {"prop_id": "giraffe", "name_ko": "기린"}, {"prop_id": "cell_phone", "name_ko": "휴대폰"}]), catalog_dir=root)
+    assert (giraffe.detector, giraffe.coco_class) == ("props", None)
+    assert (phone.detector, phone.coco_class) == ("coco", "cell phone")
+    assert phone.symmetric        # our heading classifier never learned phones: no yaw for COCO objects

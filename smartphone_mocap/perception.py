@@ -10,7 +10,7 @@ from .object_centric_association import reconstruct_object_centric
 from .object_reconstruction import StaticObjectTracker, reconstruct_static_objects
 from .pose import UltralyticsPoseEstimator
 from .publisher import make_tracking_message
-from .recognition.objects import keep_counted
+from .recognition.objects import keep_counted, merge_detections
 from .recognition.orientation import OrientationRunner
 from .reconstruction import reconstruct_primary_person
 from .types import FramePacket, Person3D, SceneObject3D
@@ -101,6 +101,8 @@ class PerceptionProcessor:
         self.asset_map: dict[str, str] = {}
         self.class_height_m: dict[str, float] = {}
         self.symmetric: set[str] = set()
+        trained_ids: list[str] = []
+        coco_names: dict[str, str] = {}   # COCO class name -> our prop_id
         if object_enabled:
             from .booth_props import BoothPropsError, check, load
             props = load(self.resolve(self.object_config["booth_props"]),
@@ -115,15 +117,27 @@ class PerceptionProcessor:
                 self.class_height_m[prop.prop_id] = prop.height_m
                 if prop.symmetric:
                     self.symmetric.add(prop.prop_id)
+                if prop.detector == "coco":
+                    coco_names[prop.coco_class] = prop.prop_id
+                else:
+                    trained_ids.append(prop.prop_id)
         factory = detector_factory or _rfdetr
+        common = dict(device=self.config.get("device"),
+                      image_size=int(self.object_config.get("image_size", 312)),
+                      mask_threshold=float(self.object_config.get("mask_threshold", 0.5)),
+                      use_amp=bool(self.object_config.get("use_amp", True)))
+        # Our trained props (A1) ...
         self.object_detector = factory(
             checkpoint=str(self.resolve(self.object_config["checkpoint"])),
-            allowed_classes=sorted(self.counts), device=self.config.get("device"),
-            image_size=int(self.object_config.get("image_size", 312)),
-            confidence=float(self.object_config.get("confidence", 0.5)),
-            mask_threshold=float(self.object_config.get("mask_threshold", 0.5)),
-            use_amp=bool(self.object_config.get("use_amp", True)),
-        ) if object_enabled else None
+            allowed_classes=sorted(trained_ids),
+            confidence=float(self.object_config.get("confidence", 0.5)), **common,
+        ) if object_enabled and trained_ids else None
+        # ... and general objects (phone, cup, ...) from the COCO-pretrained detector, renamed to our prop ids.
+        self.coco_detector = factory(
+            checkpoint=None, allowed_classes=sorted(coco_names), class_aliases=dict(coco_names),
+            confidence=float(self.object_config.get("coco_confidence", self.object_config.get("confidence", 0.5))),
+            **common,
+        ) if object_enabled and coco_names else None
         orient = orientation_factory or OrientationRunner.from_files
         self.orientation = orient(
             head_path=self.resolve(self.object_config.get("orientation_head",
@@ -197,6 +211,16 @@ class PerceptionProcessor:
             ),
         )
 
+    @staticmethod
+    def _detect(detector, images, frame_time_ns) -> dict:
+        if detector is None:
+            return {}
+        if hasattr(detector, "set_frame_time"):
+            detector.set_frame_time(frame_time_ns)
+        if hasattr(detector, "infer_batch"):
+            return detector.infer_batch(images)
+        return {camera_id: detector.infer(camera_id, image) for camera_id, image in images.items()}
+
     def resolve(self, value: str | Path) -> Path:
         path = Path(value)
         return path if path.is_absolute() else (self.base / path).resolve()
@@ -232,19 +256,11 @@ class PerceptionProcessor:
         frame_time_ns = int(
             sum(packet.capture_time_ns for packet in packets.values()) / len(packets)
         )
-        if hasattr(self.object_detector, "set_frame_time"):
-            self.object_detector.set_frame_time(frame_time_ns)
         detection_started = perf_counter()
-        detections_by_camera = (
-            self.object_detector.infer_batch(images)
-            if self.object_detector is not None
-            and hasattr(self.object_detector, "infer_batch")
-            else {
-                camera_id: self.object_detector.infer(camera_id, image)
-                for camera_id, image in images.items()
-            }
-            if self.object_detector is not None
-            else {}
+        detections_by_camera = merge_detections(
+            self._detect(self.object_detector, images, frame_time_ns),
+            self._detect(self.coco_detector, images, frame_time_ns),
+            overlap_iou=float(self.object_config.get("coco_overlap_iou", 0.5)),
         )
         if self.table_region is not None:
             # Before tracking: people, monitors and tripods around the booth never become objects.

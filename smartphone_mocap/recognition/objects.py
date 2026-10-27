@@ -67,3 +67,27 @@ def keep_counted(observations, counts):
         same.sort(key=lambda o: (-len(o.source_cameras), -o.confidence))
         kept.extend(same[:limit])
     return kept
+
+
+def _iou(a, b) -> float:
+    ix = max(0.0, min(a.x2, b.x2) - max(a.x1, b.x1))
+    iy = max(0.0, min(a.y2, b.y2) - max(a.y1, b.y1))
+    inter = ix * iy
+    union = (a.x2 - a.x1) * (a.y2 - a.y1) + (b.x2 - b.x1) * (b.y2 - b.y1) - inter
+    return inter / union if union > 0 else 0.0
+
+
+def merge_detections(primary: dict, secondary: dict, *, overlap_iou: float = 0.5, id_offset: int = 1000) -> dict:
+    """Per camera: our trained-prop detections first, then general (COCO) ones that do not sit on top of them.
+
+    A general box overlapping a trained prop (e.g. a figure called "cup") is dropped; general detections get
+    ids offset by ``id_offset`` so per-camera detection keys stay unique.
+    """
+    merged = {}
+    for camera_id in {*primary, *secondary}:
+        ours = list(primary.get(camera_id, []))
+        extra = [replace(d, local_detection_id=d.local_detection_id + id_offset)
+                 for d in secondary.get(camera_id, [])
+                 if all(_iou(d.box, o.box) < overlap_iou for o in ours)]
+        merged[camera_id] = ours + extra
+    return merged
