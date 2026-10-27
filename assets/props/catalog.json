@@ -280,9 +280,9 @@
       "detector": "coco",
       "coco_class": "teddy bear",
       "detector_class": "teddy bear",
-      "height_m": 0.2,
-      "height_source": "estimate",
-      "note": "2026-10-27 Meshy 웹에서 받은 회색 마스코트. 재학습 전까지 COCO 'teddy bear'로 찾는다. 높이는 추정",
+      "height_m": 0.36,
+      "height_source": "user",
+      "note": "2026-10-27 Meshy 웹에서 받은 회색 마스코트. 재학습 전까지 COCO 'teddy bear'로 찾는다. 높이는 사용자가 알려준 값: 머리 장식 포함 약 36cm(장식 제외 약 30cm)",
       "source_usd_uri": "gist_mascot_grey/model.usdz"
     }
   ]

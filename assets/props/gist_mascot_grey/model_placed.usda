@@ -7,8 +7,8 @@
 
 def Xform "Asset"
 {
-    float3 xformOp:scale = (0.5555555, 0.5555555, 0.5555555)
-    double3 xformOp:translate = (-0.00006760987701906587, -0.00035965399836222, 1.0476580266643775e-17)
+    float3 xformOp:scale = (0.9999998999999998, 0.9999998999999998, 0.9999998999999998)
+    double3 xformOp:translate = (-0.00012169777863431856, -0.000647377197051996, 1.8857844479958794e-17)
     uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
 
     def Xform "Model" (
