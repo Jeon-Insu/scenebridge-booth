@@ -8,7 +8,8 @@
 
 - 층 묶음(Floor_03~06, 지붕, 교무실)은 통째로 숨긴다.
 - 여러 층에 걸친 외벽·부지·보수·계단·복도 묶음은 메시마다 '그 층 높이보다 완전히 위'일 때만 숨긴다.
-- 마지막 단계는 2층 천장·조명과 교실 천장에 매달린 물체(윗면이 천장 35cm 이내, 아랫면이 천장 1.5m 이내).
+- 한 층을 숨길 때 바로 아래층의 천장·조명·보와 복도 천장에 붙은 것도 함께 숨겨 그 층 내부가 보이게 한다.
+- 2층(AI 창의교실)은 3층과 함께 교실 천장에 매달린 물체(에어컨 등: 윗면이 천장 35cm 이내, 아랫면이 천장 1.5m 이내)도 숨긴다.
 """
 import json
 import sys
@@ -25,14 +26,15 @@ VENUE = "dongshin_ai_classroom"
 OUT = ROOT / "usd/venues/dongshin_ai_classroom_cutaway.json"
 M = "/Dongshin_Main"
 CEILING_Z = 7.05          # 2층(AI 창의교실) 천장 높이
-# (시각 s, 이름, 통째로 숨길 프림, 이 높이보다 완전히 위인 공용 메시도 숨김)
+# (시각 s, 이름, 통째로 숨길 프림, 이 높이보다 완전히 위인 공용 메시도 숨김, 천장을 함께 걷을 아래층과 그 천장 높이)
 FLOOR_STAGES = [
-    (4.0, "지붕·6층", [f"{M}/Floors/Floor_06", f"{M}/Common/Roof"], 17.0),
-    (5.2, "5층", [f"{M}/Floors/Floor_05"], 13.65),
-    (6.4, "4층", [f"{M}/Floors/Floor_04"], 10.35),
-    (7.6, "3층·교무실", [f"{M}/Floors/Floor_03", f"{M}/Rooms/Teachers_Office"], 6.95),
+    (4.0, "지붕·6층 + 5층 천장", [f"{M}/Floors/Floor_06", f"{M}/Common/Roof"], 17.0, ("Floor_05", 16.95)),
+    (5.3, "5층 + 4층 천장", [f"{M}/Floors/Floor_05"], 13.65, ("Floor_04", 13.65)),
+    (6.6, "4층 + 3층 천장", [f"{M}/Floors/Floor_04"], 10.35, ("Floor_03", 10.35)),
+    (7.9, "3층·교무실 + 2층 천장", [f"{M}/Floors/Floor_03", f"{M}/Rooms/Teachers_Office"], 6.95, ("Floor_02", CEILING_Z)),
 ]
-CEILING_STAGE_AT = 8.8
+CEILING_GROUPS = ("Ceilings", "Lighting", "Beams")     # under each Floor_0N: taken whole
+CEILING_SCAN = ("Corridors",)                         # under each Floor_0N: meshes hung from the ceiling
 ASSET_GROUPS = {"Furniture", "Books", "BooksAndFiles", "PhotoFrames"}   # groups under InteriorAssets
 SHARED = [f"{M}/Common/Exterior", f"{M}/Common/CommonExteriorAndSite", f"{M}/BuildingRepairs/Geometry",
           f"{M}/Common/Stairs", f"{M}/Common/Corridors", f"{M}/Common/WestRoundStairCore"]
@@ -65,14 +67,27 @@ def main() -> int:
                 if z:
                     meshes.append((str(prim.GetPath()), *z))
 
+    def ceiling_of(floor, ceiling_z):
+        """The floor's ceilings, lights and beams, and corridor meshes hung from that ceiling."""
+        base = f"{M}/Floors/{floor}"
+        paths = [f"{base}/{g}" for g in CEILING_GROUPS if stage.GetPrimAtPath(f"{base}/{g}")]
+        for group in CEILING_SCAN:
+            root = stage.GetPrimAtPath(f"{base}/{group}")
+            for prim in (Usd.PrimRange(root) if root else []):
+                z = zrange(prim) if prim.IsA(UsdGeom.Mesh) else None
+                if z and ceiling_attached(*z, ceiling_z=ceiling_z):
+                    paths.append(str(prim.GetPath()))
+        return paths
+
     stages, taken = [], set()
-    for at, label, groups, cut in FLOOR_STAGES:                # highest cut first: each mesh goes once
+    for at, label, groups, cut, (below, below_ceiling) in FLOOR_STAGES:   # highest cut first: each mesh goes once
         paths = [p for p in groups if stage.GetPrimAtPath(p)]
         paths += [p for p in above_cut([m for m in meshes if m[0] not in taken], cut)]
+        paths += ceiling_of(below, below_ceiling)
         taken.update(paths)
         stages.append({"at": at, "label": label, "paths": paths})
 
-    ceiling = [f"{M}/Floors/Floor_02/Ceilings", f"{M}/Floors/Floor_02/Lighting"]
+    ceiling = []
     room = f"{M}/Rooms/AI_Creative_Classroom"
     # Every item under InteriorAssets (loose items like the ceiling air conditioners, and those in Furniture/Books/
     # PhotoFrames groups), plus the room shell's meshes. The ceiling rule keeps wall photos and walls.
@@ -85,7 +100,7 @@ def main() -> int:
         z = zrange(prim)
         if z and ceiling_attached(*z, ceiling_z=CEILING_Z):
             ceiling.append(str(prim.GetPath()))
-    stages.append({"at": CEILING_STAGE_AT, "label": "2층 천장", "paths": [p for p in ceiling if stage.GetPrimAtPath(p)]})
+    stages[-1]["paths"] += [p for p in ceiling if stage.GetPrimAtPath(p)]   # with the 3rd floor and the 2nd-floor ceiling
 
     eye = table_to_world(venue, venue.camera["eye"])
     target = table_to_world(venue, venue.camera["target"])
