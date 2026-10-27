@@ -4,7 +4,7 @@
 
 ## 1. 동신여고 배경 (Isaac 트윈의 무대)
 
-전달받는 것: `Dongshin_Final` 폴더 전체(약 481MB). 폴더 안의 `Dongshin_Final.usda`와 그 옆 텍스처·하위 USD를 모두 받아야 한다.
+전달받는 것: `Dongshin_Final` 폴더 전체(2026-10-27 최종 배포본, 약 658MB. 교무실·AI 교실·4층 홈베이스·복도 포함). 폴더 안의 `Dongshin_Final.usda`와 그 옆 텍스처·하위 USD를 모두 받아야 한다.
 
 넣는 위치(폴더 이름 그대로):
 

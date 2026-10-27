@@ -30,20 +30,26 @@ CEILING_Z = 7.05          # 2층(AI 창의교실) 천장 높이
 FLOOR_STAGES = [
     (4.0, "지붕·6층 + 5층 천장", [f"{M}/Floors/Floor_06", f"{M}/Common/Roof"], 17.0, ("Floor_05", 16.95)),
     (5.3, "5층 + 4층 천장", [f"{M}/Floors/Floor_05"], 13.65, ("Floor_04", 13.65)),
-    (6.6, "4층 + 3층 천장", [f"{M}/Floors/Floor_04"], 10.35, ("Floor_03", 10.35)),
+    (6.6, "4층 + 3층 천장", [f"{M}/Floors/Floor_04", f"{M}/Rooms/Homebase_F04", f"{M}/Rooms/Corridor_F04"], 10.35,
+     ("Floor_03", 10.35)),
     (7.9, "3층·교무실 + 2층 천장", [f"{M}/Floors/Floor_03", f"{M}/Rooms/Teachers_Office"], 6.95, ("Floor_02", CEILING_Z)),
 ]
 CEILING_GROUPS = ("Ceilings", "Lighting", "Beams")     # under each Floor_0N: taken whole
 CEILING_SCAN = ("Corridors",)                         # under each Floor_0N: meshes hung from the ceiling
+# Furnished rooms other than the AI classroom: their meshes go with the ceiling rule of the floor they sit on.
+# Restored_Interiors spans every floor, so its meshes are also cut by height like SHARED.
+ROOMS_ON_FLOOR = {"Floor_03": ["Teachers_Office"], "Floor_04": ["Homebase_F04", "Corridor_F04"]}
+RESTORED = f"{M}/Rooms/Restored_Interiors"
 ASSET_GROUPS = {"Furniture", "Books", "BooksAndFiles", "PhotoFrames"}   # groups under InteriorAssets
-SHARED = [f"{M}/Common/Exterior", f"{M}/Common/CommonExteriorAndSite", f"{M}/BuildingRepairs/Geometry",
+SHARED = [RESTORED, f"{M}/Common/Exterior", f"{M}/Common/CommonExteriorAndSite", f"{M}/BuildingRepairs/Geometry",
           f"{M}/Common/Stairs", f"{M}/Common/Corridors", f"{M}/Common/WestRoundStairCore"]
 # 카메라: 잔디밭 쪽(남, -Y)이 정면이고 지형은 동쪽이 높다. 언덕 위 동쪽 끝에서 대각선으로 서쪽의 교실을
 # 바라보며 건물 전체가 사선으로 보이게 시작 → 다가가며 위층을 걷어냄 → 천장이 열린 교실 위 → 테이블(장소 프리셋 시점)
+# 층이 걷히는 동안은 위에서 비스듬히(약 50~60°) 내려다보며 각 층의 방 배치가 보이게 다가간다.
 KEYS = [(0.0, [165.0, -60.0, 48.0], [62.0, 6.0, 8.0]),
-        (4.0, [112.0, -38.0, 32.0], [52.0, 4.0, 6.0]),
-        (8.0, [66.0, -16.0, 18.0], [47.0, 3.0, 5.0]),
-        (11.0, [52.0, -2.5, 11.0], [46.0, 3.5, 4.6])]
+        (4.0, [104.0, -30.0, 46.0], [58.0, 5.0, 10.0]),
+        (8.0, [60.0, -9.0, 30.0], [48.0, 3.0, 6.0]),
+        (11.0, [50.5, -1.0, 15.5], [46.0, 3.5, 4.6])]
 FINAL_T = 14.0
 
 
@@ -71,8 +77,10 @@ def main() -> int:
         """The floor's ceilings, lights and beams, and corridor meshes hung from that ceiling."""
         base = f"{M}/Floors/{floor}"
         paths = [f"{base}/{g}" for g in CEILING_GROUPS if stage.GetPrimAtPath(f"{base}/{g}")]
-        for group in CEILING_SCAN:
-            root = stage.GetPrimAtPath(f"{base}/{group}")
+        roots = [f"{base}/{g}" for g in CEILING_SCAN] + [f"{M}/Rooms/{r}" for r in ROOMS_ON_FLOOR.get(floor, [])]
+        roots.append(RESTORED)
+        for root_path in roots:
+            root = stage.GetPrimAtPath(root_path)
             for prim in (Usd.PrimRange(root) if root else []):
                 z = zrange(prim) if prim.IsA(UsdGeom.Mesh) else None
                 if z and ceiling_attached(*z, ceiling_z=ceiling_z):

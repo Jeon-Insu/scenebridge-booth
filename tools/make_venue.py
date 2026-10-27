@@ -44,7 +44,11 @@ def main():
 
     # Frames hang on several walls: group them by their thin axis and wall coordinate, keep the biggest wall.
     walls = defaultdict(list)
-    for frame in stage.GetPrimAtPath(f"{ROOM}/InteriorAssets/PhotoFrames").GetChildren():
+    # Older exports group the frames under PhotoFrames; the 2026-10-27 final keeps them as InteriorAssets/Photo_NN.
+    group = stage.GetPrimAtPath(f"{ROOM}/InteriorAssets/PhotoFrames")
+    frames_found = list(group.GetChildren()) if group else [
+        p for p in stage.GetPrimAtPath(f"{ROOM}/InteriorAssets").GetChildren() if p.GetName().startswith("Photo_")]
+    for frame in frames_found:
         lo, hi = box(frame)
         size = hi - lo
         axis = int(np.argmin(size[:2]))

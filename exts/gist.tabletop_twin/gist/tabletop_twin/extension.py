@@ -1085,7 +1085,11 @@ class TabletopTwinExtension(AssetStudioMixin, omni.ext.IExt):
                     UsdGeom.Imageable(prim).CreateVisibilityAttr().Set(token)
 
     def _start_flythrough(self) -> None:
-        """'학교에서 테이블로': from the school overview down to the table, peeling floors off on the way."""
+        """'학교에서 테이블로': from the school overview down to the table, peeling floors off on the way.
+
+        One button: every press shows the whole school again and plays from the start; a press also cancels
+        a pending autoplay so the sequence never runs twice in a row."""
+        self._fly_autoplay_at = None
         if not self._cutaway:
             carb.log_warn("[GIST Tabletop Twin] No cutaway plan for this venue (config/venues.json \"cutaway\")")
             return
@@ -2314,9 +2318,7 @@ class TabletopTwinExtension(AssetStudioMixin, omni.ext.IExt):
         with ui.VStack(spacing=6):
             with ui.HStack(height=32, spacing=6):
                 ui.Button("학교에서 테이블로", clicked_fn=self._start_flythrough, enabled=bool(self._cutaway),
-                          tooltip="동신여고 전경에서 위층을 차례로 걷어내며 테이블까지 다가갑니다.")
-                ui.Button("처음으로", clicked_fn=self._restore_flythrough, enabled=bool(self._cutaway),
-                          tooltip="숨긴 층을 모두 되살리고 학교 전경으로 돌아갑니다.")
+                          tooltip="동신여고 전경에서 위층을 차례로 걷어내며 테이블까지 다가갑니다. 다시 누르면 처음부터 재생합니다.")
             ui.Label("장면 에이전트 대화", height=26, style={"font_size": 20})
             self._agent_status_label = ui.Label("", height=20, style={"color": 0xFF8FD8FF})
             self._agent_provider_label = ui.Label("", height=0, word_wrap=True)
