@@ -27,6 +27,7 @@ def _config(tmp_path, **object_overrides):
         cam["calibration"] = str((ROOT / "smartphone_mocap/config" / cam["calibration"]).resolve())
     od = booth["object_detection"]
     od.pop("checkpoint_classes", None)     # tests choose the A (two detectors) or B (one model) split themselves
+    od.pop("general_checkpoint", None)
     for key in ("booth_props", "prop_catalog_dir", "checkpoint", "orientation_head"):
         od[key] = str((ROOT / "smartphone_mocap/config" / od[key]).resolve())
     od.update(object_overrides)
