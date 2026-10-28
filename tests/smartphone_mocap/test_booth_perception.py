@@ -125,12 +125,25 @@ def test_association_keeps_detections_down_to_the_lowest_prop_threshold(tmp_path
 
 def test_general_objects_can_come_from_our_own_trained_model(tmp_path):
     calls = []
-    PerceptionProcessor(_config(tmp_path, booth_props=_coco_list(tmp_path), general_checkpoint="/models/b3.pth",
+    model = tmp_path / "b3.pth"
+    model.write_bytes(b"")
+    PerceptionProcessor(_config(tmp_path, booth_props=_coco_list(tmp_path), general_checkpoint=str(model),
                                 coco_class_confidence={"cell_phone": 0.3}),
                         detector_factory=lambda **kw: calls.append(kw) or FakeDetector({}),
                         orientation_factory=lambda **_: None)
     figures, general = calls
     assert figures["allowed_classes"] == ["giraffe"]
-    assert general["checkpoint"] == "/models/b3.pth"
+    assert general["checkpoint"] == str(model)
     assert general["allowed_classes"] == ["cell_phone"] and not general["class_aliases"]   # it already uses our ids
     assert general["class_confidence"] == {"cell_phone": 0.3}
+
+
+def test_a_missing_general_model_falls_back_to_the_coco_detector(tmp_path, caplog):
+    calls = []
+    PerceptionProcessor(_config(tmp_path, booth_props=_coco_list(tmp_path),
+                                general_checkpoint=str(tmp_path / "not_delivered.pth")),
+                        detector_factory=lambda **kw: calls.append(kw) or FakeDetector({}),
+                        orientation_factory=lambda **_: None)
+    general = calls[1]
+    assert general["checkpoint"] is None and general["allowed_classes"] == ["cell phone"]   # still starts
+    assert "not_delivered.pth" in caplog.text

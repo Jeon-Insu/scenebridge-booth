@@ -21,7 +21,7 @@ cp -r <USB>/home/. ~/
 | 소품 3D 모델 (Meshy) 12개 | `scenebridge-booth/assets/props/<소품ID>/model.usdz` | 약 150MB | 트윈에서 그 소품이 안 보임 (인식은 동작) |
 | 피규어 검출기 A1 | `scenebridge-booth/outputs/models/prop_detector_a1.pth` | 128MB | 추적기가 시작하지 않음 |
 | 방향 분류기 | `scenebridge-booth/outputs/models/orientation_head.pt` | 39KB | 추적기가 시작하지 않음 |
-| 일반 물체·마스코트 검출기 B3 | `scenebridge-booth/outputs/models/prop_detector_b3.pth` (+ `.classes.json`) | 128MB | 추적기가 시작하지 않음. **2026-10-28 17시 이후 추가, 처음 USB(YS2)에는 없음 → 따로 전달** |
+| 일반 물체·마스코트 검출기 B3 | `scenebridge-booth/outputs/models/prop_detector_b3.pth` (+ `.classes.json`) | 128MB | 경고를 띄우고 COCO 기본 모델로 대신 찾음(회색 마스코트는 거의 못 찾음). **2026-10-28 17시 이후 추가, 처음 USB(YS2)에는 없음 → 따로 전달** |
 | 일반 물체 검출기 (COCO 기본) | `home/.roboflow/models/rf-detr-seg-nano.pt` → `~/.roboflow/models/` | 128MB | 처음 실행 때 인터넷에서 자동으로 받음 (부스에 인터넷이 없으면 필요) |
 | DINOv2-small (방향 분류기의 바탕) | `home/.cache/huggingface-gist/hub/models--facebook--dinov2-small/` → `~/.cache/huggingface-gist/hub/` | 85MB | 처음 실행 때 인터넷에서 자동으로 받음 |
 

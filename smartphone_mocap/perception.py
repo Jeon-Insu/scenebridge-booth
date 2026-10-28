@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, replace
 from pathlib import Path
 from time import perf_counter
@@ -150,6 +151,12 @@ class PerceptionProcessor:
         # general_checkpoint: our own model trained on general objects (B3) instead of the COCO-pretrained one.
         # It already names classes with our prop ids, so it gets those ids and no COCO aliases.
         general = self.object_config.get("general_checkpoint")
+        if general and not Path(self.resolve(general)).is_file():
+            # Not delivered yet (it travels separately from the repository): keep the booth running on COCO.
+            logging.getLogger(__name__).warning(
+                "일반 물체 모델이 없습니다: %s. COCO 기본 모델로 대신 찾습니다(회색 마스코트는 거의 못 찾음). "
+                "docs/USB_전달목록.md를 보세요.", self.resolve(general))
+            general = None
         self.coco_detector = factory(
             checkpoint=str(self.resolve(general)) if general else None,
             allowed_classes=sorted(coco_names.values()) if general else sorted(coco_names),
