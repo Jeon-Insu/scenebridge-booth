@@ -147,8 +147,13 @@ class PerceptionProcessor:
             class_confidence=dict(self.object_config.get("class_confidence", {})), **common,
         ) if object_enabled and trained_ids else None
         # ... and general objects (phone, cup, ...) from the COCO-pretrained detector, renamed to our prop ids.
+        # general_checkpoint: our own model trained on general objects (B3) instead of the COCO-pretrained one.
+        # It already names classes with our prop ids, so it gets those ids and no COCO aliases.
+        general = self.object_config.get("general_checkpoint")
         self.coco_detector = factory(
-            checkpoint=None, allowed_classes=sorted(coco_names), class_aliases=dict(coco_names),
+            checkpoint=str(self.resolve(general)) if general else None,
+            allowed_classes=sorted(coco_names.values()) if general else sorted(coco_names),
+            class_aliases={} if general else dict(coco_names),
             confidence=float(self.object_config.get("coco_confidence", self.object_config.get("confidence", 0.5))),
             class_confidence=dict(self.object_config.get("coco_class_confidence", {})),  # e.g. phone lower
             **common,

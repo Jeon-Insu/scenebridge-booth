@@ -120,3 +120,16 @@ def test_association_keeps_detections_down_to_the_lowest_prop_threshold(tmp_path
                                             coco_class_confidence={"cell_phone": 0.3}),
                                     detector_factory=lambda **_: FakeDetector({}), orientation_factory=lambda **_: None)
     assert processor.association_min_confidence == 0.3   # else a 0.3 phone is dropped after detection
+
+
+def test_general_objects_can_come_from_our_own_trained_model(tmp_path):
+    calls = []
+    PerceptionProcessor(_config(tmp_path, booth_props=_coco_list(tmp_path), general_checkpoint="/models/b3.pth",
+                                coco_class_confidence={"cell_phone": 0.3}),
+                        detector_factory=lambda **kw: calls.append(kw) or FakeDetector({}),
+                        orientation_factory=lambda **_: None)
+    figures, general = calls
+    assert figures["allowed_classes"] == ["giraffe"]
+    assert general["checkpoint"] == "/models/b3.pth"
+    assert general["allowed_classes"] == ["cell_phone"] and not general["class_aliases"]   # it already uses our ids
+    assert general["class_confidence"] == {"cell_phone": 0.3}

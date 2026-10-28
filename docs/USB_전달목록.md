@@ -21,6 +21,7 @@ cp -r <USB>/home/. ~/
 | 소품 3D 모델 (Meshy) 12개 | `scenebridge-booth/assets/props/<소품ID>/model.usdz` | 약 150MB | 트윈에서 그 소품이 안 보임 (인식은 동작) |
 | 피규어 검출기 A1 | `scenebridge-booth/outputs/models/prop_detector_a1.pth` | 128MB | 추적기가 시작하지 않음 |
 | 방향 분류기 | `scenebridge-booth/outputs/models/orientation_head.pt` | 39KB | 추적기가 시작하지 않음 |
+| 일반 물체·마스코트 검출기 B3 | `scenebridge-booth/outputs/models/prop_detector_b3.pth` (+ `.classes.json`) | 128MB | 추적기가 시작하지 않음. **2026-10-28 17시 이후 추가, 처음 USB(YS2)에는 없음 → 따로 전달** |
 | 일반 물체 검출기 (COCO 기본) | `home/.roboflow/models/rf-detr-seg-nano.pt` → `~/.roboflow/models/` | 128MB | 처음 실행 때 인터넷에서 자동으로 받음 (부스에 인터넷이 없으면 필요) |
 | DINOv2-small (방향 분류기의 바탕) | `home/.cache/huggingface-gist/hub/models--facebook--dinov2-small/` → `~/.cache/huggingface-gist/hub/` | 85MB | 처음 실행 때 인터넷에서 자동으로 받음 |
 
@@ -37,13 +38,13 @@ cp -r <USB>/home/. ~/
 - 휴대폰·책·페트병 모델은 단순 형상이라 저장소에 이미 들어 있다.
 - `model.usdz` 옆의 `model_placed.usda`(저장소에 있음)가 크기·바닥 위치를 맞추므로, **파일 이름과 폴더를 바꾸지 않는다.**
 
-## 2. 시험용 (USB 안, 지금 설정에서는 안 씀)
+## 2. 시험용 (지금 설정에서는 안 씀)
 
 | 무엇 | 위치 | 설명 |
 |---|---|---|
-| B안 모델 2차 | `scenebridge-booth/outputs/models/prop_detector_b2.pth` (+ `.classes.json`) | 12종을 모델 하나로 찾는 시험 모델. 실제 녹화에서 로봇 피규어를 거의 못 찾아 **지금은 쓰지 않는다.** 바꾸는 방법은 `docs/HANDOFF.md` 5절 |
+| B안 모델 2차 | `scenebridge-booth/outputs/models/prop_detector_b2.pth` (+ `.classes.json`) | 12종을 모델 하나로 찾는 시험 모델. 실제 녹화에서 로봇 피규어를 거의 못 찾아 쓰지 않는다 |
 
-B안 3차(피규어 비중을 높인 재학습)는 2026-10-28 오후에 학습 중이었다. 결과가 좋으면 같은 위치로 따로 전달한다.
+지금 설정: 피규어 6종은 A1(합성만 학습), 회색 마스코트와 일반 물체 5종은 B3(합성 + COCO 실사 일반 물체)가 찾는다.
 
 ## 3. USB에 넣지 않은 것 (받는 쪽에서 준비)
 
@@ -60,7 +61,7 @@ B안 3차(피규어 비중을 높인 재학습)는 2026-10-28 오후에 학습 �
 ```bash
 cd scenebridge-booth
 ls assets/props/*/model.usdz | wc -l                 # 12
-ls outputs/models/                                     # prop_detector_a1.pth, orientation_head.pt (+ b2)
+ls outputs/models/                                     # prop_detector_a1.pth, prop_detector_b3.pth, orientation_head.pt
 python3 tools/venue_args.py dongshin_ai_classroom      # 인자 여러 줄이 나오면 배경 정상
 python3 tools/booth_check.py                           # 소품 목록 점검
 ```
