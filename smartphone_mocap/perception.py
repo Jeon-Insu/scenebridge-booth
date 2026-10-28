@@ -103,6 +103,8 @@ class PerceptionProcessor:
         self.symmetric: set[str] = set()
         trained_ids: list[str] = []
         coco_names: dict[str, str] = {}   # COCO class name -> our prop_id
+        # B plan: a checkpoint trained on general objects too lists its classes here; those props skip COCO.
+        checkpoint_classes = set(self.object_config.get("checkpoint_classes") or [])
         if object_enabled:
             from .booth_props import BoothPropsError, check, load
             props = load(self.resolve(self.object_config["booth_props"]),
@@ -117,11 +119,22 @@ class PerceptionProcessor:
                 self.class_height_m[prop.prop_id] = prop.height_m
                 if prop.symmetric:
                     self.symmetric.add(prop.prop_id)
-                if prop.detector == "coco":
+                if prop.detector == "coco" and prop.prop_id not in checkpoint_classes:
                     coco_names[prop.coco_class] = prop.prop_id
                 else:
                     trained_ids.append(prop.prop_id)
         factory = detector_factory or _rfdetr
+        # The detectors already apply each prop's threshold; association must not re-filter at the default one
+        # or a phone kept at 0.3 would vanish here.
+        od = self.object_config
+        self.association_min_confidence = min([float(od.get("confidence", 0.25)),
+                                               float(od.get("coco_confidence", od.get("confidence", 0.25))),
+                                               *map(float, (od.get("class_confidence") or {}).values()),
+                                               *map(float, (od.get("coco_class_confidence") or {}).values())])
+        single_view = od.get("single_view") or {}
+        self.single_view_args = ({"single_view_min_confidence": float(single_view.get("min_confidence", 0.6)),
+                                  "single_view_merge_m": float(single_view.get("merge_radius_m", 0.15))}
+                                 if single_view.get("enabled") else {})
         common = dict(device=self.config.get("device"),
                       image_size=int(self.object_config.get("image_size", 312)),
                       mask_threshold=float(self.object_config.get("mask_threshold", 0.5)),
@@ -130,7 +143,8 @@ class PerceptionProcessor:
         self.object_detector = factory(
             checkpoint=str(self.resolve(self.object_config["checkpoint"])),
             allowed_classes=sorted(trained_ids),
-            confidence=float(self.object_config.get("confidence", 0.5)), **common,
+            confidence=float(self.object_config.get("confidence", 0.5)),
+            class_confidence=dict(self.object_config.get("class_confidence", {})), **common,
         ) if object_enabled and trained_ids else None
         # ... and general objects (phone, cup, ...) from the COCO-pretrained detector, renamed to our prop ids.
         self.coco_detector = factory(
@@ -277,7 +291,8 @@ class PerceptionProcessor:
         reconstruct = (reconstruct_object_centric if self.association_backend == "object_centric"
                        else reconstruct_static_objects)
         extra = {"diagnostics": association_diagnostics,
-                 "appearance_policy": str(self.object_config.get("appearance_policy", "strict"))
+                 "appearance_policy": str(self.object_config.get("appearance_policy", "strict")),
+                 **self.single_view_args,
                  } if self.association_backend == "object_centric" else {}
         object_observations = reconstruct(
             detections_by_camera,
@@ -285,7 +300,7 @@ class PerceptionProcessor:
             asset_map=self.asset_map,
             fallback_asset_uri=self.fallback_asset_uri,
             anchor=str(self.object_config.get("anchor", "bottom_center")),
-            min_confidence=float(self.object_config.get("confidence", 0.25)),
+            min_confidence=self.association_min_confidence,
             max_reprojection_error_px=float(
                 self.object_config.get("max_reprojection_error_px", 100.0)
             ),

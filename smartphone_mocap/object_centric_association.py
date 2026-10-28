@@ -41,7 +41,12 @@ def reconstruct_object_centric(
     previous_track_groups: dict[str, list[dict[str, int]]] | None = None,
     diagnostics: dict | None = None,
     appearance_policy: str = "strict",
+    single_view_min_confidence: float | None = None,
+    single_view_merge_m: float = 0.15,
 ) -> list[SceneObject3D]:
+    """single_view_min_confidence: when set, a new detection seen by one camera only (not part of any
+    multi-view group, not owned by a known object) becomes an object on the table plane if it is at least
+    this confident and no object of the same label lies within single_view_merge_m."""
     if appearance_policy not in {"strict", "continuity"}:
         raise ValueError(f"Unsupported appearance policy: {appearance_policy}")
     if position_mode not in {"triangulate", "hybrid_mask"}:
@@ -299,6 +304,42 @@ def reconstruct_object_centric(
             if owner is not None:
                 accepted_owners.add(owner)
             accepted_count += 1
+
+        if single_view_min_confidence is not None:
+            placed = [np.asarray(o.xyz, float) for o in output if o.label == label]
+            lone = sorted((i for i in groups if i not in accepted_keys and len(groups[i]) == 1 and owners[i] is None
+                           and items[i].confidence >= single_view_min_confidence),
+                          key=lambda i: (-items[i].confidence, i))
+            for i in lone:
+                if accepted_count >= max_instances_per_class:
+                    break
+                d = items[i]
+                hit = _ray_plane_intersection(calibrations[d.camera_id], d.anchor_xy("mask_bottom_center"),
+                                              support_plane_z_m)
+                if hit is None:
+                    continue
+                xyz = np.asarray(hit, float)
+                xyz[2] = support_plane_z_m
+                if workspace_min_xyz is not None and np.any(xyz < np.asarray(workspace_min_xyz)):
+                    continue
+                if workspace_max_xyz is not None and np.any(xyz > np.asarray(workspace_max_xyz)):
+                    continue
+                if any(np.linalg.norm(xyz[:2] - q[:2]) < single_view_merge_m for q in placed):
+                    continue   # another camera's view of an object already placed
+                output.append(SceneObject3D(
+                    global_id="", label=label, xyz=tuple(float(v) for v in xyz),
+                    confidence=float(d.confidence), reprojection_error_px=0.0,
+                    source_cameras=(d.camera_id,),
+                    asset_uri=(asset_map or {}).get(label, fallback_asset_uri), state="observed",
+                    appearance=_mean_appearance((d,)),
+                    representative_crops=tuple(c for c in (d.representative_crop,) if c is not None),
+                    position_mode="single_view",
+                    source_detection_keys=((d.camera_id, d.local_detection_id),),
+                    source_track_keys=tuple(sorted(_source_track_map((d,)).items())),
+                ))
+                placed.append(xyz)
+                accepted_keys.add(i)
+                accepted_count += 1
         stats["accepted_groups"] += accepted_count
         stats["pending_detections"] += len(items) - len(accepted_keys)
     return output

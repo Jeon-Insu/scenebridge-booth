@@ -83,6 +83,8 @@
     "image_size": 312,
     "mask_threshold": 0.5,
     "use_amp": true,
+    "single_view": {"enabled": true, "min_confidence": 0.6, "merge_radius_m": 0.15},
+    "single_view_note": "카메라 1대만 잡아도 새 물체를 만든다(테이블 면 위치). 1대일 때는 신뢰도 0.6 이상, 같은 종류 물체 15cm 안이면 새로 만들지 않음. 처음 나타날 때 확인 프레임(min_confirmations)은 같다",
     "local_tracking": {
       "enabled": true,
       "frame_rate": 5,

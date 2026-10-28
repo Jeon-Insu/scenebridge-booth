@@ -26,6 +26,7 @@ def _config(tmp_path, **object_overrides):
     for cam in booth["cameras"]:
         cam["calibration"] = str((ROOT / "smartphone_mocap/config" / cam["calibration"]).resolve())
     od = booth["object_detection"]
+    od.pop("checkpoint_classes", None)     # tests choose the A (two detectors) or B (one model) split themselves
     for key in ("booth_props", "prop_catalog_dir", "checkpoint", "orientation_head"):
         od[key] = str((ROOT / "smartphone_mocap/config" / od[key]).resolve())
     od.update(object_overrides)
@@ -100,3 +101,22 @@ def test_the_coco_detector_gets_per_prop_thresholds(tmp_path):
     props, coco = calls
     assert coco["class_confidence"] == {"cell_phone": 0.3}
     assert "class_confidence" not in props or not props["class_confidence"]
+
+
+def test_a_checkpoint_that_knows_general_objects_replaces_the_coco_detector(tmp_path):
+    calls = []
+    PerceptionProcessor(_config(tmp_path, booth_props=_coco_list(tmp_path),
+                                checkpoint_classes=["cell_phone", "giraffe", "zebra"],
+                                class_confidence={"cell_phone": 0.3}),
+                        detector_factory=lambda **kw: calls.append(kw) or FakeDetector({}),
+                        orientation_factory=lambda **_: None)
+    (only,) = calls                                  # one model, no COCO detector
+    assert only["allowed_classes"] == ["cell_phone", "giraffe"]
+    assert only["class_confidence"] == {"cell_phone": 0.3}
+
+
+def test_association_keeps_detections_down_to_the_lowest_prop_threshold(tmp_path):
+    processor = PerceptionProcessor(_config(tmp_path, booth_props=_coco_list(tmp_path), confidence=0.5,
+                                            coco_class_confidence={"cell_phone": 0.3}),
+                                    detector_factory=lambda **_: FakeDetector({}), orientation_factory=lambda **_: None)
+    assert processor.association_min_confidence == 0.3   # else a 0.3 phone is dropped after detection

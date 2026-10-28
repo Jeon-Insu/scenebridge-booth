@@ -186,3 +186,35 @@ def test_unknown_association_method_is_not_silently_ignored():
         PerceptionProcessor(root / "smartphone_mocap/config/booth.json",
             persist_appearance=False,
             object_detection_overrides={"enabled": False, "association_backend": "typo"})
+
+
+def test_single_view_birth_puts_a_confident_detection_on_the_table():
+    rig, detections = scene([{0}])
+    output = reconstruct_object_centric(detections, rig, single_view_min_confidence=0.6)
+    assert len(output) == 1
+    assert output[0].position_mode == "single_view" and len(output[0].source_cameras) == 1
+    assert np.allclose(output[0].xyz, POSITIONS[0], atol=1e-3)     # ray hits the table plane at the base
+
+
+def test_single_view_birth_needs_its_own_higher_confidence():
+    rig, detections = scene([{0}])                                   # detections are 0.95
+    assert reconstruct_object_centric(detections, rig, single_view_min_confidence=0.99) == []
+
+
+def test_single_view_birth_does_not_duplicate_an_object_other_cameras_already_placed():
+    rig, detections = scene([{0, 1, 2, 3}])
+    names = list(rig)
+    lone = detections[names[0]][0]
+    detections[names[0]] = [replace(lone, box=BoundingBox2D(lone.box.x1 + 6, lone.box.y1, lone.box.x2 + 6, lone.box.y2))]
+    output = reconstruct_object_centric(detections, rig, max_reprojection_error_px=2., single_view_min_confidence=0.6)
+    assert len(output) == 1 and len(output[0].source_cameras) == 3   # the off view is not a second cup
+
+
+def test_single_view_birth_leaves_known_objects_to_the_tracker():
+    rig, detections = scene([{0, 1, 2, 3}, {0, 1, 2, 3}])
+    tracker = StaticObjectTracker(min_confirmations=1, ema_alpha=1.)
+    tracker.update(reconstruct_object_centric(detections, rig, max_reprojection_error_px=2.))
+    rig, visible = scene([{0}, {1, 2, 3}])
+    measured = reconstruct_object_centric(visible, rig, max_reprojection_error_px=2., single_view_min_confidence=0.6,
+                                          previous_track_groups=tracker.local_track_groups())
+    assert len(measured) == 1    # the lone view belongs to a known cup: the tracker keeps it as 'partial'
