@@ -90,3 +90,13 @@ def test_a_list_of_trained_props_only_makes_one_detector(tmp_path):
                         detector_factory=lambda **kw: calls.append(kw) or FakeDetector({}),
                         orientation_factory=lambda **_: None)
     assert len(calls) == 1
+
+
+def test_the_coco_detector_gets_per_prop_thresholds(tmp_path):
+    calls = []
+    PerceptionProcessor(_config(tmp_path, booth_props=_coco_list(tmp_path), coco_class_confidence={"cell_phone": 0.3}),
+                        detector_factory=lambda **kw: calls.append(kw) or FakeDetector({}),
+                        orientation_factory=lambda **_: None)
+    props, coco = calls
+    assert coco["class_confidence"] == {"cell_phone": 0.3}
+    assert "class_confidence" not in props or not props["class_confidence"]

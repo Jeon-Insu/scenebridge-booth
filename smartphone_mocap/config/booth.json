@@ -78,6 +78,8 @@
     "orientation_head": "../../outputs/models/orientation_head.pt",
     "orientation_interval_s": 0.5,
     "confidence": 0.5,
+    "coco_class_confidence": {"cell_phone": 0.3},
+    "coco_class_confidence_note": "일반 물체 검출기에서 소품별 기준. 휴대폰은 놓치지 않는 것이 우선이라 0.3(COCO 실사 검증: 재현율 0.53→0.75, 정밀도 0.93→0.74). 나머지는 confidence(0.5)",
     "image_size": 312,
     "mask_threshold": 0.5,
     "use_amp": true,

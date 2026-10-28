@@ -403,6 +403,7 @@ class RFDETRSegObjectDetector:
         excluded_classes: list[str] | None = None,
         class_aliases: dict[str, str] | None = None,
         checkpoint: str | None = None,
+        class_confidence: dict[str, float] | None = None,
     ) -> None:
         try:
             import torch
@@ -446,6 +447,8 @@ class RFDETRSegObjectDetector:
         self.allowed_classes = set(allowed_classes or [])
         self.excluded_classes = set(excluded_classes or [])
         self.class_aliases = dict(class_aliases or {})
+        # Per-label thresholds (after aliasing), e.g. {"cell_phone": 0.3}; other labels keep `confidence`.
+        self.class_confidence = {str(k): float(v) for k, v in (class_confidence or {}).items()}
         dtype = torch.float16 if bool(use_amp) and self.device.type == "cuda" else torch.float32
         # JIT tracing fixes the batch size and adds a long first-run compile.
         # Eager FP16 is already fast on GB10 and remains valid if cameras drop.
@@ -470,7 +473,7 @@ class RFDETRSegObjectDetector:
         ]
         predictions = self.model.predict(
             rgb_images,
-            threshold=self.confidence,
+            threshold=min([self.confidence, *self.class_confidence.values()]),
             include_source_image=False,
         )
         if len(camera_ids) == 1 and not isinstance(predictions, list):
@@ -488,12 +491,17 @@ class RFDETRSegObjectDetector:
                     strict=True,
                 )
             ):
-                label = str(self.categories[int(class_id)])
+                try:
+                    label = str(self.categories[int(class_id)])
+                except (IndexError, KeyError):
+                    continue  # low thresholds can return an id past the class list (e.g. the no-object slot)
                 if self.allowed_classes and label not in self.allowed_classes:
                     continue
                 if label in self.excluded_classes:
                     continue
                 label = self.class_aliases.get(label, label)
+                if float(confidence) < self.class_confidence.get(label, self.confidence):
+                    continue
                 mask = None if masks is None else np.asarray(masks[index])
                 if mask is not None:
                     mask = mask >= self.mask_threshold

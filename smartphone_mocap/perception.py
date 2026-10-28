@@ -136,6 +136,7 @@ class PerceptionProcessor:
         self.coco_detector = factory(
             checkpoint=None, allowed_classes=sorted(coco_names), class_aliases=dict(coco_names),
             confidence=float(self.object_config.get("coco_confidence", self.object_config.get("confidence", 0.5))),
+            class_confidence=dict(self.object_config.get("coco_class_confidence", {})),  # e.g. phone lower
             **common,
         ) if object_enabled and coco_names else None
         orient = orientation_factory or OrientationRunner.from_files
