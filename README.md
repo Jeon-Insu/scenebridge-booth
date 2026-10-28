@@ -26,7 +26,7 @@
 ## 빠른 시작
 
 1. 설치: [`docs/INSTALL.md`](docs/INSTALL.md). Isaac Sim 6.0.1, Python venv, SGLang + Gemma 4를 설치한다.
-2. 따로 받은 파일 넣기: [`docs/ASSETS.md`](docs/ASSETS.md)
+2. 따로 받은 파일 넣기: USB 전달 목록 [`docs/USB_전달목록.md`](docs/USB_전달목록.md), 파일 규칙 [`docs/ASSETS.md`](docs/ASSETS.md)
    - 배경: `usd/venues/source/Dongshin_Final/`
    - 소품 모델: `assets/props/<prop_id>/model.usdz`
    - 모델 가중치: `outputs/models/`
