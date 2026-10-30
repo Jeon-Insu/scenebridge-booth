@@ -14,6 +14,11 @@ if ! python3 tools/booth_check.py; then
   exit 1
 fi
 
+if ! python3 tools/booth_preflight.py --config "${booth_config}"; then
+  echo "위 [문제]를 고친 뒤 다시 실행하세요." >&2
+  exit 1
+fi
+
 if ! python3 tools/venue_args.py --config "${booth_config}" >/dev/null; then
   echo "장소 프리셋(config/venues.json, 부스 설정의 venue)을 고친 뒤 다시 실행하세요." >&2
   exit 1

@@ -2,7 +2,14 @@
 set -euo pipefail
 
 project_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-isaac_dir="${ISAAC_SIM_DIR:-${HOME}/isaac-sim-standalone-6.0.1-linux-aarch64}"
+# Isaac Sim: ISAAC_SIM_DIR, or the newest isaac-sim-standalone-* in the home folder or on the Desktop.
+isaac_dir="${ISAAC_SIM_DIR:-$(find "${HOME}" "${HOME}/Desktop" -maxdepth 1 -type d -name 'isaac-sim-standalone-*' \
+  -print 2>/dev/null | sort -V | tail -n 1)}"
+if [[ -z "${isaac_dir}" || ! -x "${isaac_dir}/isaac-sim.sh" ]]; then
+  echo "Isaac Sim을 찾지 못했습니다(${isaac_dir:-홈 폴더와 Desktop에 isaac-sim-standalone-* 없음})." >&2
+  echo "설치한 폴더를 알려 주세요: export ISAAC_SIM_DIR=/설치/경로/isaac-sim-standalone-6.0.1-linux-aarch64" >&2
+  exit 1
+fi
 ui_check_args=()
 # The venue preset (config/venues.json) gives the background USD and where the table sits in it.
 # One source of truth: the tracker config's "venue" (TABLETOP_VENUE overrides, e.g. for a quick look).

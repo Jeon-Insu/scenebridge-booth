@@ -27,7 +27,7 @@ python3.12 -m venv .venv-mocap
 # PyTorch를 먼저 설치한다. 플랫폼에 맞는 CUDA 빌드여야 한다(검증: torch 2.13.0, torchvision 0.28.0).
 .venv-mocap/bin/python -m pip install torch torchvision --index-url <플랫폼에 맞는 PyTorch 주소>
 .venv-mocap/bin/python -m pip install -r smartphone_mocap/requirements.txt
-.venv-mocap/bin/python -m pytest tests -q          # 회귀 테스트 (2026-10-26: 419 passed)
+.venv-mocap/bin/python -m pytest tests -q          # 회귀 테스트 (2026-10-30: 457 passed)
 ```
 
 - 방향 분류기가 쓰는 DINOv2-small(`facebook/dinov2-small`)은 처음 실행할 때 Hugging Face에서 자동으로 받는다. 받는 위치는 `~/.cache/huggingface-gist/hub`이고, 환경변수 `HF_HUB_CACHE`로 바꿀 수 있다.
@@ -39,19 +39,16 @@ python3.12 -m venv .venv-mocap
 
 ## 2. 모델 가중치 (따로 전달)
 
-모델 가중치 두 파일은 저장소에 없고 따로 전달받는다. 받은 파일을 이름 그대로 `outputs/models/`에 넣는다.
+모델 가중치는 저장소에 없고 따로 전달받는다. 받은 파일을 이름 그대로 `outputs/models/`에 넣는다. 전체 전달 목록은 [`docs/USB_전달목록.md`](USB_전달목록.md)에 있다.
 
-```
-outputs/models/prop_detector_a1.pth
-outputs/models/orientation_head.pt
-```
+| 파일 | 내용 | 없으면 |
+|---|---|---|
+| `prop_detector_a1.pth` (128MB) | 피규어 6종 검출기. RF-DETR-Seg nano, Isaac 합성 데이터로 학습 | 시작하지 않음 |
+| `orientation_head.pt` | 피규어 방향 분류기. DINOv2-small 특징 위에 붙인 선형 분류기 | 시작하지 않음 |
+| `prop_detector_b3.pth` (128MB) + `prop_detector_b3.classes.json` | 회색 마스코트 + 일반 물체 5종(컵·휴대폰·책·화분·페트병) 검출기. 합성 + COCO 실사로 학습 | 경고 후 COCO 기본 모델로 대신 찾음(회색 마스코트는 거의 못 찾음) |
 
-| 파일 | 내용 |
-|---|---|
-| `prop_detector_a1.pth` (128MB) | RF-DETR-Seg nano, 소품 10종, Isaac 합성 데이터로 학습 |
-
-일반 물체(컵·휴대폰·책·화분·페트병·회색 마스코트)를 찾는 COCO 80종 모델(`rf-detr-seg-nano.pt`)은 **처음 실행할 때 인터넷에서 자동으로 받아** `~/.roboflow/models/`에 저장된다. 부스에 인터넷이 없으면 미리 한 번 실행해 두거나 이 파일을 같은 위치에 복사한다.
-| `orientation_head.pt` | DINOv2-small 특징 위에 붙인 선형 방향 분류기 |
+- COCO 기본 모델(`rf-detr-seg-nano.pt`)은 B3가 없을 때만 쓴다. 처음 실행할 때 인터넷에서 자동으로 받아 `~/.roboflow/models/`에 저장한다. 부스에 인터넷이 없으면 USB로 받은 파일을 같은 위치에 둔다.
+- `python3 tools/booth_preflight.py`가 가중치·카메라·Docker 권한을 점검한다. `booth_start.sh`도 시작 전에 이것을 실행한다.
 
 ## 3. 따로 전달받는 파일
 
@@ -71,6 +68,7 @@ curl http://127.0.0.1:30000/v1/models   # 모델 이름이 나오면 준비 완�
   - `SGLANG_CONTEXT_LENGTH`
   - `SGLANG_MAX_TOTAL_TOKENS`
 - 작은 모델 프로필 `SGLANG_PROFILE=qwen3-8b`도 스크립트에 있다. 다만 이 데모에서는 Gemma 4만 검증했다.
+- Docker를 sudo 없이 쓸 수 있어야 한다: `sudo usermod -aG docker $USER` 후 다시 로그인한다.
 - 에이전트 서비스(HTTP 7080)는 데모 시작 스크립트가 함께 켠다. 설정 파일은 `smartphone_mocap/config/tabletop_agent.json`이다.
 
 ## 5. 카메라
@@ -79,7 +77,7 @@ curl http://127.0.0.1:30000/v1/models   # 모델 이름이 나오면 준비 완�
    ```bash
    ls -l /dev/v4l/by-path/
    ```
-2. `smartphone_mocap/config/booth.json`의 `cameras[].source`를 자기 장치 경로로 바꾼다. 형식(`fourcc`, `fps`)은 대역폭에 맞춘다.
+2. `smartphone_mocap/config/booth.json`의 `cameras[].source`를 자기 장치 경로로 바꾼다. **저장소의 값은 개발 컴퓨터의 USB 포트 경로라 다른 컴퓨터나 다른 포트에서는 반드시 바꿔야 한다.** 바꾸지 않으면 `booth_start.sh`의 점검이 "카메라 장치가 없습니다"로 멈춘다. 형식(`fourcc`, `fps`)은 대역폭에 맞춘다.
    - 허브 하나를 두 대가 같이 쓰면 YUYV 10fps로 둔다.
    - 따로 연결된 카메라는 MJPG 15fps로 둔다.
 3. 허브 하나를 두 대가 같이 써서 한 대가 0fps가 되면 USB 대역폭 보정을 적용한다.
@@ -95,10 +93,11 @@ curl http://127.0.0.1:30000/v1/models   # 모델 이름이 나오면 준비 완�
 python3 tools/booth_check.py                          # 소품 목록 점검
 python3 tools/venue_args.py dongshin_ai_classroom      # 배경 파일 확인
 .venv-mocap/bin/python tools/booth_smoke_test.py      # 에이전트 점검 (SGLang·에이전트 서비스가 켜져 있어야 함)
-./tools/booth_start.sh                                # 목록 확인 → 언어 모델 → 데모
+python3 tools/booth_preflight.py                      # 가중치·카메라·Docker 권한 점검
+./tools/booth_start.sh                                # 목록·점검 → 언어 모델 → 데모
 ```
 
-Isaac Sim 위치가 `~/isaac-sim-standalone-6.0.1-linux-aarch64`가 아니면 먼저 지정한다.
+Isaac Sim은 홈 폴더나 `~/Desktop` 바로 아래의 `isaac-sim-standalone-*` 폴더를 자동으로 찾는다. 다른 곳에 설치했으면 먼저 지정한다.
 
 ```bash
 export ISAAC_SIM_DIR=<Isaac Sim 폴더>

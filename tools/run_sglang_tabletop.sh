@@ -83,7 +83,7 @@ served_model() {
 
 start_server() {
   mkdir -p "${cache_dir}"
-  if docker ps --format '{{.Names}}' | rg -qx "${container_name}"; then
+  if docker ps --format '{{.Names}}' | grep -qx "${container_name}"; then
     current_model="$(served_model)"
     if [[ "${current_model}" == "${model}" ]]; then
       if ! curl -fsS http://127.0.0.1:30000/get_server_info | python3 -c '
@@ -103,7 +103,7 @@ sys.exit(0 if actual==expected else 1)
     echo "Use '$0 switch' to replace the running model." >&2
     return 1
   fi
-  if docker ps -a --format '{{.Names}}' | rg -qx "${container_name}"; then
+  if docker ps -a --format '{{.Names}}' | grep -qx "${container_name}"; then
     docker rm "${container_name}" >/dev/null
   fi
 

@@ -36,20 +36,23 @@ echo "Local scene-agent bridge started (PID ${agent_pid}); SGLang is used when a
 isaac_pid="$!"
 
 echo "Isaac Sim starting (PID ${isaac_pid}); log: ${log_dir}/tabletop_isaac.log"
+# A first start on a new computer compiles shaders for several minutes.
+ready_timeout_s="${ISAAC_READY_TIMEOUT_S:-300}"
 isaac_ready=false
-for _ in $(seq 1 60); do
+for _ in $(seq 1 $((ready_timeout_s * 2))); do
   kill -0 "${isaac_pid}" 2>/dev/null || {
-    echo "Isaac Sim exited during startup. See ${log_dir}/tabletop_isaac.log" >&2
+    echo "Isaac Sim이 시작 중에 꺼졌습니다. 로그: ${log_dir}/tabletop_isaac.log" >&2
     exit 1
   }
-  if rg -q "app ready|Isaac Sim Full App is loaded" "${log_dir}/tabletop_isaac.log" 2>/dev/null; then
+  if grep -qE "app ready|Isaac Sim Full App is loaded" "${log_dir}/tabletop_isaac.log" 2>/dev/null; then
     isaac_ready=true
     break
   fi
   sleep 0.5
 done
 if [[ "${isaac_ready}" != true ]]; then
-  echo "Isaac Sim did not report ready within 30 seconds." >&2
+  echo "Isaac Sim이 ${ready_timeout_s}초 안에 준비되지 않았습니다. 로그: ${log_dir}/tabletop_isaac.log" >&2
+  echo "처음 켤 때 더 오래 걸리면: ISAAC_READY_TIMEOUT_S=600 ./tools/booth_start.sh" >&2
   exit 1
 fi
 
